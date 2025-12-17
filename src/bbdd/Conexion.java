@@ -1,9 +1,11 @@
 package bbdd;
 
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class Conexion {
     private String ip;
@@ -46,7 +48,7 @@ public class Conexion {
                     pst=conn.prepareStatement(aSQL);
                     pst.executeUpdate();
                 }
-            } catch (SQLException ex) {
+            } catch (SQLException | IOException ex) {
                 ex.printStackTrace();
             }
 
@@ -64,7 +66,41 @@ public class Conexion {
         }
     }
 
-    private String leerFichero(){
-        return "";
+    private String leerFichero() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("basedatos.sql"));
+        String linea;
+        StringBuilder stringBuilder = new StringBuilder();
+        while ((linea = reader.readLine()) != null){
+            stringBuilder.append(linea);
+            stringBuilder.append(" ");
+        }
+
+        return stringBuilder.toString();
+    }
+
+    private void getPropValues(){
+        InputStream inputStream = null;
+        try {
+
+            Properties prop = new Properties();
+            String propFileName = "config.properties";
+
+            inputStream = new FileInputStream(propFileName);
+
+            prop.load(inputStream);
+            ip = prop.getProperty("ip");
+            user = prop.getProperty("user");
+            contra = prop.getProperty("pass");
+            adminContra = prop.getProperty("admin");
+
+        }catch (Exception e){
+            System.out.println("Exception: " + e);
+        }finally {
+            try {
+                if (inputStream != null) inputStream.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="LGoodDatePicker-10.3.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/LGoodDatePicker-10.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jgoodies-forms-1.8.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jgoodies-common-1.8.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
