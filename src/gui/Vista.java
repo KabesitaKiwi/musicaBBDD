@@ -98,7 +98,7 @@ public class Vista extends JFrame{
         initFrame();
     }
 
-    private void initFrame() {
+    public void initFrame() {
         this.setContentPane(panel1);
 
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

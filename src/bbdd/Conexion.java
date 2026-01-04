@@ -1,11 +1,14 @@
 package bbdd;
 
+import gui.Vista;
+
 import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Conexion {
     private String ip;
@@ -13,7 +16,11 @@ public class Conexion {
     private String contra;
     private String adminContra;
 
-    private Connection conn;
+    public Conexion(){
+        getPropValues();
+    }
+
+    public static Connection conn;
 
     public String getIp() {
         return ip;
@@ -31,7 +38,7 @@ public class Conexion {
         return adminContra;
     }
 
-    void conectar(){
+    public void conectar(){
         try {
             conn = DriverManager.getConnection(
                     "jdbc:mysql://"+ip+":3306/musica",user,contra
@@ -57,7 +64,7 @@ public class Conexion {
         }
     }
 
-    void desconectar(){
+    public void desconectar(){
         try {
             conn.close();
             conn=null;
@@ -78,7 +85,7 @@ public class Conexion {
         return stringBuilder.toString();
     }
 
-    private void getPropValues(){
+    public void getPropValues(){
         InputStream inputStream = null;
         try {
 
@@ -103,4 +110,25 @@ public class Conexion {
             }
         }
     }
+
+    public void setPropValues(String ip, String user, String pass, String adminPass) {
+        try {
+            Properties prop = new Properties();
+            prop.setProperty("ip", ip);
+            prop.setProperty("user", user);
+            prop.setProperty("pass", pass);
+            prop.setProperty("admin", adminPass);
+            OutputStream out = new FileOutputStream("config.properties");
+            prop.store(out, null);
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        this.ip = ip;
+        this.user = user;
+        this.contra = pass;
+        this.adminContra = adminPass;
+    }
+
+
 }
