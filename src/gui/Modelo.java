@@ -3,6 +3,7 @@ package gui;
 import bbdd.Conexion;
 import modelo.Album;
 import modelo.Autor;
+import modelo.Canciones;
 import modelo.Productora;
 
 import javax.swing.*;
@@ -138,7 +139,6 @@ public class Modelo {
         return resultado;
     }
 
-
     boolean insertarProductora(Productora prod){
         String SQL = "INSERT INTO productora(nombre, localizacion, trabajadores, fechaFundacion, propietario) VALUES" +
                 "(?,?,?,?,?)";
@@ -196,7 +196,63 @@ public class Modelo {
         }
     }
 
+    boolean insertarCanciones(Canciones can){
+        String SQL = "INSERT INTO cancion(titulo as 'titulo', idAutor as 'Autor', genero as 'Género', idProductora as 'Productora', " +
+                "principiantes as 'Principiantes', duracion as 'Duración', idioma as 'Idioma', valoracion as 'Valoración', idAlbum as 'Album')VALUES" +
+                "(?,?,?,?,?,?,?,?,?)";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = Conexion.conn.prepareStatement(SQL);
+            sentencia.setString(1, can.getTitulo());
+            sentencia.setInt(2, can.getAutor());
+            sentencia.setString(3, can.getGenero());
+            sentencia.setInt(4, can.getProductora());
+            sentencia.setInt(5, can.getNumeroParticipantes());
+            sentencia.setFloat(6, can.getDuracion());
+            sentencia.setString(7,can.getIdioma());
+            sentencia.setInt(8, can.getValoracion());
+            sentencia.setInt(9,can.getAlbum());
+            sentencia.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if (sentencia != null){
+                try {
+                    sentencia.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
+
+    ResultSet consultarCancion() throws SQLException {
+        String SQL = "SELECT titulo as 'Título', idAutor as 'Autor', genero as 'Género', idProductora as 'Productora', " +
+                "principiantes as 'Participantes', duracion as 'Duración', idioma as 'Idioma', valoracion as 'Valoración', " +
+                "idAlbum as 'Album' FROM cancion";
+        PreparedStatement sentencia = null;
+        ResultSet resultado = null;
+        sentencia = Conexion.conn.prepareStatement(SQL);
+        resultado = sentencia.executeQuery();
+        return resultado;
+    }
 
 
+    public boolean existeCancionPorAlbum(int idAutor, String titulo) {
+        String sql = "SELECT 1 FROM album WHERE idAutor = ? AND titulo = ? LIMIT 1";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
+            ps.setInt(1, idAutor);
+            ps.setString(2, titulo);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 }
