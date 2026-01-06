@@ -2,16 +2,17 @@ package modelo;
 
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class Productora {
     int idPord;
     String nombre;
     String localizacion;
     int trabajadores;
-    Date fechaFundacion;
+    LocalDate fechaFundacion;
     String propietario;
 
-    public Productora(int idPord, String nombre, String localizacion, int trabajadores, Date fechaFundacion, String propietario) {
+    public Productora(int idPord, String nombre, String localizacion, int trabajadores, LocalDate fechaFundacion, String propietario) {
         this.idPord = idPord;
         this.nombre = nombre;
         this.localizacion = localizacion;
@@ -20,7 +21,7 @@ public class Productora {
         this.propietario = propietario;
     }
 
-    public Productora(String nombre, String localizacion, int trabajadores, Date fechaFundacion, String propietario) {
+    public Productora(String nombre, String localizacion, int trabajadores, LocalDate fechaFundacion, String propietario) {
         this.idPord = 0;
         this.nombre = nombre;
         this.localizacion = localizacion;
@@ -61,11 +62,11 @@ public class Productora {
         this.trabajadores = trabajadores;
     }
 
-    public Date getFechaFundacion() {
+    public LocalDate getFechaFundacion() {
         return fechaFundacion;
     }
 
-    public void setFechaFundacion(Date fechaFundacion) {
+    public void setFechaFundacion(LocalDate fechaFundacion) {
         this.fechaFundacion = fechaFundacion;
     }
 

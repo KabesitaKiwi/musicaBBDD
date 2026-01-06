@@ -757,7 +757,9 @@
                   </grid>
                   <forms defaultalign-horz="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <name value="nombre"/>
+                </properties>
               </component>
               <component id="e9785" class="javax.swing.JComboBox" binding="comboLocalizacion">
                 <constraints>
@@ -768,6 +770,7 @@
                   <model>
                     <item value="Seleccione"/>
                   </model>
+                  <name value="localizacion"/>
                 </properties>
               </component>
               <component id="691c4" class="javax.swing.JSpinner" binding="campoNumTrabajadores">
@@ -775,14 +778,18 @@
                   <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <name value="numero de trabajadores"/>
+                </properties>
               </component>
               <component id="e058f" class="com.github.lgooddatepicker.components.DatePicker" binding="campoFechaFundacion">
                 <constraints>
                   <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <name value="fecha"/>
+                </properties>
               </component>
               <component id="501db" class="javax.swing.JTextField" binding="campoPropietario">
                 <constraints>
@@ -791,7 +798,9 @@
                   </grid>
                   <forms defaultalign-horz="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <name value="propietario"/>
+                </properties>
               </component>
               <component id="c5574" class="javax.swing.JButton" binding="botonAñadirProductora">
                 <constraints>

@@ -191,7 +191,10 @@ public class Vista extends JFrame{
 
         SpinnerNumberModel duracionCancion = new SpinnerNumberModel(3.5, 0.0, 600.0, 0.5);
         campoDuracion.setModel(duracionCancion);
-        campoNumDuracion.setModel(duracionCancion);
+
+
+        SpinnerNumberModel duracionAlbum = new SpinnerNumberModel(15, 0.0, 600.0, 1);
+        campoNumDuracion.setModel(duracionAlbum);
 
         SpinnerNumberModel edad = new SpinnerNumberModel(16, 14, 100, 1);
         campoEdad.setModel(edad);
@@ -201,10 +204,10 @@ public class Vista extends JFrame{
         ((JSpinner.DefaultEditor) campoNumParticipantes.getEditor()).getTextField().setEditable(false);
 
         SpinnerNumberModel numeroCanciones = new SpinnerNumberModel(1, 1, 40, 1);
-        campoNumCanciones.setModel(participantes);
+        campoNumCanciones.setModel(numeroCanciones);
 
         SpinnerNumberModel numeroTrabajadores = new SpinnerNumberModel(1, 1, 100, 1);
-        campoNumCanciones.setModel(participantes);
+        campoNumTrabajadores.setModel(numeroTrabajadores);
 
         //valores de slider
         campoValoracion.setMinimum(0);     // Valor mínimo

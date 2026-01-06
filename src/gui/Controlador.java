@@ -3,6 +3,7 @@ package gui;
 import bbdd.Conexion;
 import modelo.Album;
 import modelo.Autor;
+import modelo.Productora;
 import util.Util;
 
 import javax.swing.*;
@@ -38,6 +39,8 @@ public class Controlador extends Component implements ActionListener, ItemListen
 
     private void refrescarTodo(){
         refrescarAutores();
+        refrescarAlbum();
+        refrescarProductoras();
         refrescar = false;
     }
 
@@ -48,6 +51,10 @@ public class Controlador extends Component implements ActionListener, ItemListen
     private void addActionListeners(ActionListener listener){
         vista.botonAñadirAutor.addActionListener(listener);
         vista.botonAñadirAutor.setActionCommand("anadirAutor");
+        vista.botonAñadirAlbum.addActionListener(listener);
+        vista.botonAñadirAlbum.setActionCommand("anadirAlbum");
+        vista.botonAñadirProductora.addActionListener(listener);
+        vista.botonAñadirProductora.setActionCommand("anadirProd");
         vista.optionDialog.botonGuardarOpciones.addActionListener(listener);
         vista.optionDialog.botonGuardarOpciones.setActionCommand("guardarOpciones");
         vista.itemOpciones.addActionListener(listener);
@@ -63,13 +70,22 @@ public class Controlador extends Component implements ActionListener, ItemListen
                     registrarAutor();
                 break;
             }
-            case "guardarOpciones":
+            case "guardarOpciones": {
                 conexion.setPropValues(vista.optionDialog.campoIp.getText(), vista.optionDialog.campoUsuario.getText(),
                         String.valueOf(vista.optionDialog.campoContra.getPassword()), String.valueOf(vista.optionDialog.campoContraAdmin.getPassword()));
                 vista.optionDialog.dispose();
                 vista.dispose();
                 new Controlador(new Modelo(), new Vista(), new Conexion());
                 break;
+            }
+            case "anadirAlbum": {
+                registrarAlbum();
+                break;
+            }
+            case "anadirProd":{
+                registrarProductora();
+                break;
+            }
 
         }
     }
@@ -168,7 +184,7 @@ public class Controlador extends Component implements ActionListener, ItemListen
             Util.lanzaAlertaVacio(vista.campoTituloAlbum);
         }else if(Util.comprobarCombobox(vista.comboAutores)){
             Util.lanzaAlertaCombo(vista.comboAutores);
-        }else if (!Util.comprobarSpinner(vista.campoNumCanciones)){
+        }else if (Util.comprobarSpinner(vista.campoNumCanciones)){
             JOptionPane.showMessageDialog(null, "El campo Numero de canciones no puede ser menor que 0");
         }else if(Util.comprobarSpinner(vista.campoDuracion)){
             JOptionPane.showMessageDialog(null, "El campo Duracion en minutos no puede ser menor que 0");
@@ -178,11 +194,13 @@ public class Controlador extends Component implements ActionListener, ItemListen
             Util.lanzaAlertaCombo(vista.comboProductora);
         }else{
             String titulo = vista.campoTituloAlbum.getText();
-            int autor = (int) vista.comboAutores.getSelectedItem();
-            int numCanciones = (int)vista.campoNumCanciones.getValue();
-            int duracionCanciones = (int)vista.campoDuracion.getValue();
+            String itemAutor = vista.comboAutores.getSelectedItem().toString();
+            int autor = Integer.parseInt(itemAutor.split(" - ")[0].trim());
+            int numCanciones = ((Number)vista.campoNumCanciones.getValue()).intValue();
+            int duracionCanciones = ((Number)vista.campoDuracion.getValue()).intValue();
             LocalDate fechaSalida = vista.campoFechaSalidaAlbum.getDate();
-            int productora = (int)vista.comboProductora.getSelectedItem();
+            String itemProd = vista.comboProductora.getSelectedItem().toString();
+            int productora = Integer.parseInt(itemProd.split(" - ")[0].trim());
 
             Album au = new Album(autor,titulo,numCanciones,duracionCanciones,fechaSalida,productora);
 
@@ -195,12 +213,60 @@ public class Controlador extends Component implements ActionListener, ItemListen
 
             if (modelo.insertarAlbum(au)){
                 JOptionPane.showMessageDialog(null, "El Album ha sido registrado correctamente");
-                borrarCamposAutor();
-                refrescarAutores();
+                refrescarAlbum();
+                borrarCamposAlbum();
+
             }else {
                 JOptionPane.showMessageDialog(null, "Album no registrado ");
             }
         }
+    }
+
+    public void registrarProductora() {
+        if (!Util.comprobarCampoVacio(vista.campoNombreProd)) {
+            Util.lanzaAlertaVacio(vista.campoNombreProd);
+        } else if (Util.comprobarCombobox(vista.comboLocalizacion)) {
+            Util.lanzaAlertaCombo(vista.comboLocalizacion);
+        } else if (Util.comprobarSpinner(vista.campoNumTrabajadores)) {
+            JOptionPane.showMessageDialog(null, "El campo Trabajadores no puede ser menor que 0");
+        } else if (Util.campoVacioCalendario(vista.campoFechaFundacion)) {
+            Util.lanzaAlertaVacioCalendar(vista.campoFechaFundacion);
+        } else if (!Util.comprobarCampoVacio(vista.campoPropietario)) {
+            Util.lanzaAlertaVacio(vista.campoPropietario);
+        } else {
+
+            String nombre = vista.campoNombreProd.getText();
+            String localizacion = vista.comboLocalizacion.getSelectedItem().toString();
+            int numeroTrabajadores = (int)vista.campoNumTrabajadores.getValue();
+            LocalDate fechaFundacion = vista.campoFechaFundacion.getDate();
+            String propietario = vista.campoPropietario.getText();
+
+            Productora prod = new Productora(nombre, localizacion, numeroTrabajadores, fechaFundacion, propietario);
+
+            if (modelo.existeProductora(prod.getNombre())){
+                JOptionPane.showMessageDialog(null, "Esta Productora ya existe, cambia el nombre");
+                vista.campoNombreProd.setText("");
+                return;
+            }
+
+            if (modelo.insertarProductora(prod)){
+                JOptionPane.showMessageDialog(null, "La Productora ha sido registrado correctamente");
+                borrarCamposProductora();
+                refrescarProductoras();
+
+            }else {
+                JOptionPane.showMessageDialog(null, "Productora no registrado ");
+            }
+
+        }
+    }
+
+    private void borrarCamposProductora(){
+        vista.campoNombreProd.setText("");
+        vista.comboLocalizacion.setSelectedIndex(0);
+        vista.campoNumTrabajadores.setValue(0);
+        vista.campoFechaFundacion.setText("");
+        vista.campoPropietario.setText("");
     }
 
     private void borrarCamposAutor(){
@@ -210,6 +276,14 @@ public class Controlador extends Component implements ActionListener, ItemListen
         vista.campoPais.setSelectedIndex(0);
         vista.campoFechaPrimeraPubli.setText("");
         vista.siRadioButton.isSelected();
+    }
+    private void borrarCamposAlbum(){
+        vista.campoTituloAlbum.setText("");
+        vista.campoAutor.setSelectedIndex(-1);
+        vista.campoNumCanciones.setValue(1);
+        vista.campoDuracion.setValue(30);
+        vista.campoFechaSalidaAlbum.setText("");
+        vista.campoProd.setSelectedIndex(-1);
     }
 
     private void refrescarAutores(){
@@ -248,7 +322,18 @@ public class Controlador extends Component implements ActionListener, ItemListen
 
     }
 
-
+    private void refrescarAlbum(){
+        try {
+            vista.tablaAlbum.setModel(construirTableModelAlbum(modelo.consultarAlbum()));
+            vista.campoALbum.removeAllItems();
+            for(int i = 0; i < vista.dtmAlbum.getRowCount(); i++) {
+                vista.campoALbum.addItem(vista.dtmAlbum.getValueAt(i, 0)+" - "+
+                        vista.dtmAlbum.getValueAt(i, 2));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     private DefaultTableModel construirTableModelAlbum(ResultSet rs) throws SQLException {
 
@@ -268,6 +353,42 @@ public class Controlador extends Component implements ActionListener, ItemListen
         vista.dtmAlbum.setDataVector(data, nombreColumnas);
 
         return vista.dtmAlbum;
+    }
+
+    private void refrescarProductoras(){
+        try {
+            vista.tablaProductora.setModel(construirTableModelProductora(modelo.consultarProductora()));
+            vista.campoProd.removeAllItems();
+            for(int i = 0; i < vista.dtmProductora.getRowCount(); i++) {
+                vista.campoProd.addItem(vista.dtmProductora.getValueAt(i, 0)+" - "+
+                        vista.dtmProductora.getValueAt(i, 1));
+                vista.comboProductora.addItem(vista.dtmProductora.getValueAt(i, 0)+" - "+
+                        vista.dtmProductora.getValueAt(i, 1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private DefaultTableModel construirTableModelProductora(ResultSet rs) throws SQLException {
+
+        ResultSetMetaData metaData = rs.getMetaData();
+
+        //nombre de las columnas
+
+        Vector<String> nombreColumnas = new Vector<>();
+        int numeroColumnas = metaData.getColumnCount();
+        for (int column = 1; column <= numeroColumnas; column++){
+            nombreColumnas.add(metaData.getColumnName(column));
+        }
+
+        //datos de la tabla
+        Vector<Vector<Object>> data = new Vector<>();
+        setDataVector(rs, numeroColumnas, data);
+
+        vista.dtmProductora.setDataVector(data, nombreColumnas);
+
+        return vista.dtmProductora;
     }
 
     private void setDataVector(ResultSet rs, int columnCount, Vector<Vector<Object>> data) throws SQLException {
