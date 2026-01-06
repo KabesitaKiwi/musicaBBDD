@@ -1,6 +1,7 @@
 package gui.base.enums;
 
 public enum LocalizacionProductora {
+    SELECCIONE("Seleccione"),
     ESPAÑA("España"),
     REPUBLICADOMINICANA("República dominicana"),
     COLOMBIA("Colombia"),

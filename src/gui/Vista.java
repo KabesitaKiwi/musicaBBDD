@@ -72,6 +72,8 @@ public class Vista extends JFrame{
     public JTable tablaProductora;
     public JScrollPane tabla;
     public DatePicker campoFechaFundacion;
+    public JComboBox comboAutores;
+    public JComboBox comboProductora;
 
     //busqueda
     private JLabel etiquetasEstado;
@@ -96,6 +98,7 @@ public class Vista extends JFrame{
     public Vista(){
         super(TITULO_FRAME);
         initFrame();
+        initComponents();
     }
 
     public void initFrame() {
@@ -183,4 +186,36 @@ public class Vista extends JFrame{
         }
         comboLocalizacion.setSelectedIndex(-1);
     }
+    public void initComponents(){
+        //valor predeterminado en diferentes spiner
+
+        SpinnerNumberModel duracionCancion = new SpinnerNumberModel(3.5, 0.0, 600.0, 0.5);
+        campoDuracion.setModel(duracionCancion);
+        campoNumDuracion.setModel(duracionCancion);
+
+        SpinnerNumberModel edad = new SpinnerNumberModel(16, 14, 100, 1);
+        campoEdad.setModel(edad);
+
+        SpinnerNumberModel participantes = new SpinnerNumberModel(1, 1, 10, 1);
+        campoNumParticipantes.setModel(participantes);
+        ((JSpinner.DefaultEditor) campoNumParticipantes.getEditor()).getTextField().setEditable(false);
+
+        SpinnerNumberModel numeroCanciones = new SpinnerNumberModel(1, 1, 40, 1);
+        campoNumCanciones.setModel(participantes);
+
+        SpinnerNumberModel numeroTrabajadores = new SpinnerNumberModel(1, 1, 100, 1);
+        campoNumCanciones.setModel(participantes);
+
+        //valores de slider
+        campoValoracion.setMinimum(0);     // Valor mínimo
+        campoValoracion.setMaximum(10);    // Valor máximo
+        campoValoracion.setValue(5);       // Valor inicialç
+        campoValoracion.setMajorTickSpacing(1);  // Separación grande entre marcas
+        campoValoracion.setPaintLabels(true);    // Mostrar los números debajo
+
+        comboLocalizacion.setSelectedIndex(0);
+        campoPais.setSelectedIndex(0);
+    }
+
+
 }

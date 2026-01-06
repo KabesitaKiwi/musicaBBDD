@@ -1,6 +1,7 @@
 package modelo;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class Album {
     int idAlbum;
@@ -8,10 +9,10 @@ public class Album {
     String titulo;
     int numeroCanciones;
     int duracionMins;
-    Date fechaSalida;
+    LocalDate fechaSalida;
     int idProductora;
 
-    public Album(int idAutor, String titulo, int numeroCanciones, int duracionMins, Date fechaSalida, int idProductora) {
+    public Album(int idAutor, String titulo, int numeroCanciones, int duracionMins, LocalDate fechaSalida, int idProductora) {
         this.idAlbum = 0;
         this.idAutor = idAutor;
         this.titulo = titulo;
@@ -21,7 +22,7 @@ public class Album {
         this.idProductora = idProductora;
     }
 
-    public Album(int idAlbum, int idAutor, String titulo, int numeroCanciones, int duracionMins, Date fechaSalida, int idProductora) {
+    public Album(int idAlbum, int idAutor, String titulo, int numeroCanciones, int duracionMins, LocalDate fechaSalida, int idProductora) {
         this.idAlbum = idAlbum;
         this.idAutor = idAutor;
         this.titulo = titulo;
@@ -71,11 +72,11 @@ public class Album {
         this.duracionMins = duracionMins;
     }
 
-    public Date getFechaSalida() {
+    public LocalDate getFechaSalida() {
         return fechaSalida;
     }
 
-    public void setFechaSalida(Date fechaSalida) {
+    public void setFechaSalida(LocalDate fechaSalida) {
         this.fechaSalida = fechaSalida;
     }
 
@@ -91,4 +92,6 @@ public class Album {
     public String toString() {
         return titulo;
     }
+
+
 }
