@@ -13,11 +13,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Vector;
 
 public class Controlador extends Component implements ActionListener, ItemListener, ListSelectionListener, WindowListener {
@@ -163,9 +163,29 @@ public class Controlador extends Component implements ActionListener, ItemListen
     }
 
     @Override
-    public void valueChanged(ListSelectionEvent listSelectionEvent) {
+    public void valueChanged(ListSelectionEvent e) {
+        if(!e.getValueIsAdjusting() && !((ListSelectionModel) e.getSource()).isSelectionEmpty()){
+            if (e.getSource().equals(vista.tablaAutor.getSelectionModel())){
+                int row = vista.tablaAutor.getSelectedRow();
+                vista.campoNombreArtistico.setText(String.valueOf(vista.tablaAutor.getValueAt(row,  1)));
+                vista.campoNombreReal.setText(String.valueOf(vista.tablaAutor.getValueAt(row,  2)));
+                vista.campoEdad.setValue(vista.tablaAutor.getValueAt(row,3));
+                vista.campoPais.setSelectedItem(String.valueOf(vista.tablaAutor.getValueAt(row,4)));
+                vista.campoFechaPrimeraPubli.setDate(Date.valueOf(String.valueOf(vista.tablaAutor.getValueAt(row, 5))).toLocalDate());
+                boolean gira = Boolean.parseBoolean(String.valueOf(vista.tablaAutor.getValueAt(row, 6)));
+                vista.siRadioButton.setSelected(gira);
+                vista.noRadioButton.setSelected(!gira);
+                }else if (e.getSource())
+            } else if (e.getValueIsAdjusting()
+                && ((ListSelectionModel) e.getSource()).isSelectionEmpty() && !refrescar) {
+                if (e.getSource().equals(vista.tablaAutor.getSelectionModel())) {
+                    borrarCamposAutor();
+                }
+        }
 
-    }
+
+        }
+
     private void setOptions(){
         vista.optionDialog.campoIp.setText(conexion.getIp());
         vista.optionDialog.campoUsuario.setText(conexion.getUser());
@@ -208,6 +228,10 @@ public class Controlador extends Component implements ActionListener, ItemListen
                 JOptionPane.showMessageDialog(null, "Autor no registrado ");
             }
         }
+
+    }
+
+    void modificarAutor(){
 
     }
 
@@ -648,5 +672,22 @@ public class Controlador extends Component implements ActionListener, ItemListen
             }
             data.add(vector);
         }
+    }
+
+    void iniciar (){
+        vista.tablaAutor.setCellSelectionEnabled(true);
+        ListSelectionModel cellSelectionModel = vista.tablaAutor.getSelectionModel();
+        cellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+
+        cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
+
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting() && !((ListSelectionModel)e.getSource()).isSelectionEmpty()){
+                    if (e.getSource().equals(vista.tablaAutor.getSelectionModel())){
+                        int row = vista.tablaAutor.
+                    }
+                }
+            }
+        });
     }
 }
