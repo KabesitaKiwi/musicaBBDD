@@ -68,7 +68,9 @@
                   </grid>
                   <forms defaultalign-horz="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <name value="titulo"/>
+                </properties>
               </component>
               <component id="40e01" class="javax.swing.JLabel">
                 <constraints>
@@ -151,6 +153,7 @@
                   <model>
                     <item value="Seleccione"/>
                   </model>
+                  <name value="album"/>
                 </properties>
               </component>
               <component id="db63a" class="javax.swing.JComboBox" binding="campoAutor">
@@ -162,6 +165,7 @@
                   <model>
                     <item value="Seleccione"/>
                   </model>
+                  <name value="autor"/>
                 </properties>
               </component>
               <component id="1d512" class="javax.swing.JComboBox" binding="campoProd">
@@ -173,6 +177,7 @@
                   <model>
                     <item value="Seleccione"/>
                   </model>
+                  <name value="productora"/>
                 </properties>
               </component>
               <component id="9bebc" class="javax.swing.JTextField" binding="campoGenero">
@@ -182,7 +187,9 @@
                   </grid>
                   <forms defaultalign-horz="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <name value="género"/>
+                </properties>
               </component>
               <component id="412cb" class="javax.swing.JSpinner" binding="campoNumParticipantes">
                 <constraints>
@@ -190,6 +197,7 @@
                   <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties>
+                  <name value="numero de participantes"/>
                   <preferredSize width="50" height="30"/>
                 </properties>
               </component>
@@ -198,7 +206,9 @@
                   <grid row="12" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <name value="duración"/>
+                </properties>
               </component>
               <component id="c7c98" class="javax.swing.JSlider" binding="campoValoracion">
                 <constraints>
@@ -574,28 +584,36 @@
                   </grid>
                   <forms defaultalign-horz="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <name value="titulo"/>
+                </properties>
               </component>
               <component id="a019b" class="javax.swing.JSpinner" binding="campoNumCanciones">
                 <constraints>
                   <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <name value="numero canciones"/>
+                </properties>
               </component>
               <component id="757dc" class="javax.swing.JSpinner" binding="campoNumDuracion">
                 <constraints>
                   <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <name value="duracion en minutos"/>
+                </properties>
               </component>
               <component id="76105" class="com.github.lgooddatepicker.components.DatePicker" binding="campoFechaSalidaAlbum">
                 <constraints>
                   <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <name value="fecha de salida"/>
+                </properties>
               </component>
               <component id="d3e0e" class="javax.swing.JButton" binding="botonAñadirAlbum">
                 <constraints>
@@ -656,6 +674,7 @@
                   <model>
                     <item value="Seleccione"/>
                   </model>
+                  <name value="autor"/>
                 </properties>
               </component>
               <component id="ffef0" class="javax.swing.JLabel">
@@ -676,6 +695,7 @@
                   <model>
                     <item value="Seleccione"/>
                   </model>
+                  <name value="productora"/>
                 </properties>
               </component>
             </children>
@@ -767,9 +787,7 @@
                   <forms/>
                 </constraints>
                 <properties>
-                  <model>
-                    <item value="Seleccione"/>
-                  </model>
+                  <model/>
                   <name value="localizacion"/>
                 </properties>
               </component>

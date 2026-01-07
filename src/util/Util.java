@@ -22,7 +22,7 @@ public class Util {
     }
 
     public static boolean comprobarSpinner(JSpinner spinner){
-        return ((Number) spinner.getValue()).intValue()>13;
+        return ((Number) spinner.getValue()).intValue()>=0;
     }
 
     public static void lanzaAlertaCero(JSpinner spinner){

@@ -129,7 +129,7 @@ public class Modelo {
 
     ResultSet consultarAlbum() throws SQLException {
         String SQL = "SELECT a.idAlbum as 'ID', au.nombreArtistico as 'Autor', a.titulo as 'titulo', a.numeroCanciones as 'Numero Canciones', "+
-                "a.duracionMinutos as 'Duracion en Minutos', a.fechaSalida as 'Fecha de Salida', a.idProductora as 'Porductora' FROM album as a "+
+                "a.duracionMinutos as 'Duracion en Minutos', a.fechaSalida as 'Fecha de Salida', a.idProductora as 'Productora' FROM album as a "+
                 "inner join autor as au" +
                 " on a.idAutor = au.idAutor";
         PreparedStatement sentencia = null;
@@ -197,9 +197,8 @@ public class Modelo {
     }
 
     boolean insertarCanciones(Canciones can){
-        String SQL = "INSERT INTO cancion(titulo as 'titulo', idAutor as 'Autor', genero as 'Género', idProductora as 'Productora', " +
-                "principiantes as 'Principiantes', duracion as 'Duración', idioma as 'Idioma', valoracion as 'Valoración', idAlbum as 'Album')VALUES" +
-                "(?,?,?,?,?,?,?,?,?)";
+        String SQL = "INSERT INTO cancion (titulo, idAutor, genero, idProductora, participantes, duracion, idioma, valoracion, idAlbum) " +
+                "VALUES (?,?,?,?,?,?,?,?,?)";
         PreparedStatement sentencia = null;
 
         try {
@@ -230,9 +229,13 @@ public class Modelo {
     }
 
     ResultSet consultarCancion() throws SQLException {
-        String SQL = "SELECT titulo as 'Título', idAutor as 'Autor', genero as 'Género', idProductora as 'Productora', " +
-                "principiantes as 'Participantes', duracion as 'Duración', idioma as 'Idioma', valoracion as 'Valoración', " +
-                "idAlbum as 'Album' FROM cancion";
+        String SQL =
+                "SELECT c.titulo AS 'Título', a.nombreArtistico AS 'Autor', c.genero AS 'Género', p.nombre AS 'Productora', " +
+                        "c.participantes AS 'Participantes', c.duracion AS 'Duración', c.idioma AS 'Idioma', " +
+                        "c.valoracion AS 'Valoración', al.titulo AS 'Album' FROM cancion c " +
+                        "INNER JOIN autor a ON c.idAutor = a.idAutor " +
+                        "INNER JOIN productora p ON c.idProductora = p.idProductora " +
+                        "INNER JOIN album al ON c.idAlbum = al.idAlbum";
         PreparedStatement sentencia = null;
         ResultSet resultado = null;
         sentencia = Conexion.conn.prepareStatement(SQL);
@@ -242,7 +245,7 @@ public class Modelo {
 
 
     public boolean existeCancionPorAlbum(int idAutor, String titulo) {
-        String sql = "SELECT 1 FROM album WHERE idAutor = ? AND titulo = ? LIMIT 1";
+        String sql = "SELECT 1 FROM cancion WHERE idAutor = ? AND titulo = ? LIMIT 1";
         try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
             ps.setInt(1, idAutor);
             ps.setString(2, titulo);

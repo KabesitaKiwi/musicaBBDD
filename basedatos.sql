@@ -13,7 +13,7 @@ duracion float not null,
 idioma varchar (30) not null,
 valoracion int not null,
 idAlbum int not null,
-UNIQUE (idAlbum, titulo)
+UNIQUE (idAlbum,idAutor, titulo)
 );
 --
 CREATE TABLE if NOT EXISTS autor(

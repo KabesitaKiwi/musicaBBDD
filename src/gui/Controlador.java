@@ -3,6 +3,7 @@ package gui;
 import bbdd.Conexion;
 import modelo.Album;
 import modelo.Autor;
+import modelo.Canciones;
 import modelo.Productora;
 import util.Util;
 
@@ -38,6 +39,7 @@ public class Controlador extends Component implements ActionListener, ItemListen
     }
 
     private void refrescarTodo(){
+        refrescarCanciones();
         refrescarAutores();
         refrescarAlbum();
         refrescarProductoras();
@@ -55,6 +57,8 @@ public class Controlador extends Component implements ActionListener, ItemListen
         vista.botonAñadirAlbum.setActionCommand("anadirAlbum");
         vista.botonAñadirProductora.addActionListener(listener);
         vista.botonAñadirProductora.setActionCommand("anadirProd");
+        vista.añadirButton.addActionListener(listener);
+        vista.añadirButton.setActionCommand("anadirCancion");
         vista.optionDialog.botonGuardarOpciones.addActionListener(listener);
         vista.optionDialog.botonGuardarOpciones.setActionCommand("guardarOpciones");
         vista.itemOpciones.addActionListener(listener);
@@ -65,6 +69,10 @@ public class Controlador extends Component implements ActionListener, ItemListen
         String command = e.getActionCommand();
 
         switch (command){
+            case "anadirCancion":{
+                registrarCancion();
+                break;
+            }
 
             case "anadirAutor":{
                     registrarAutor();
@@ -227,7 +235,7 @@ public class Controlador extends Component implements ActionListener, ItemListen
             Util.lanzaAlertaVacio(vista.campoNombreProd);
         } else if (Util.comprobarCombobox(vista.comboLocalizacion)) {
             Util.lanzaAlertaCombo(vista.comboLocalizacion);
-        } else if (Util.comprobarSpinner(vista.campoNumTrabajadores)) {
+        } else if (!Util.comprobarSpinner(vista.campoNumTrabajadores)) {
             JOptionPane.showMessageDialog(null, "El campo Trabajadores no puede ser menor que 0");
         } else if (Util.campoVacioCalendario(vista.campoFechaFundacion)) {
             Util.lanzaAlertaVacioCalendar(vista.campoFechaFundacion);
@@ -261,6 +269,74 @@ public class Controlador extends Component implements ActionListener, ItemListen
         }
     }
 
+    public void registrarCancion() {
+
+        if (!Util.comprobarCampoVacio(vista.campoTituloCancion)) {
+            Util.lanzaAlertaVacio(vista.campoTituloCancion);
+        }  else if (!Util.comprobarCampoVacio(vista.campoGenero)) {
+            Util.lanzaAlertaVacio(vista.campoGenero);
+        }  else if (!Util.comprobarSpinner(vista.campoNumParticipantes)) {
+            JOptionPane.showMessageDialog(null, "El Nº de participantes no puede ser menor que 0");
+        } else if (!Util.comprobarSpinner(vista.campoDuracion)) {
+            JOptionPane.showMessageDialog(null, "La duración no puede ser menor o igual que 0");
+        } else if (!vista.españolCheckBox.isSelected() && !vista.inglesCheckBox.isSelected() && !vista.dembowCheckBox.isSelected()) {
+            JOptionPane.showMessageDialog(null, "Selecciona al menos un idioma");
+        } else {
+            String titulo = vista.campoTituloCancion.getText();
+            String genero = vista.campoGenero.getText();
+
+            String itemAlbum = vista.campoALbum.getSelectedItem().toString();
+            int Album = Integer.parseInt(itemAlbum.split(" - ")[0]);
+
+            String itemAutor = vista.campoAutor.getSelectedItem().toString();
+            int Autor = Integer.parseInt(itemAutor.split(" - ")[0]);
+
+            String itemProd = vista.campoProd.getSelectedItem().toString();
+            int Productora = Integer.parseInt(itemProd.split(" - ")[0]);
+
+            int participantes = ((Number) vista.campoNumParticipantes.getValue()).intValue();
+            float duracion = ((Number) vista.campoDuracion.getValue()).floatValue();
+            int valoracion = vista.campoValoracion.getValue();
+
+            StringBuilder idioma = new StringBuilder();
+            if (vista.españolCheckBox.isSelected()) idioma.append("Español,");
+            if (vista.inglesCheckBox.isSelected()) idioma.append("Ingles,");
+            if (vista.dembowCheckBox.isSelected()) idioma.append("Dembow,");
+            idioma.deleteCharAt(idioma.length() - 1);
+
+            Canciones c = new Canciones( titulo, Album, Autor, genero, Productora,
+                    participantes, duracion, idioma.toString(), valoracion);
+
+            if (modelo.existeCancionPorAlbum(Album, titulo)) {
+                JOptionPane.showMessageDialog(null, "Esa canción ya existe en ese álbum. Cambia el título o el álbum.");
+                vista.campoTituloCancion.setText("");
+                return;
+            }
+
+            if (modelo.insertarCanciones(c)) {
+                JOptionPane.showMessageDialog(null, "La canción se ha registrado correctamente");
+                borrarCamposCancion();
+                refrescarCanciones();
+            } else {
+                JOptionPane.showMessageDialog(null, "Canción no registrada");
+            }
+        }
+    }
+
+    private void borrarCamposCancion() {
+        vista.campoTituloCancion.setText("");
+        vista.campoALbum.setSelectedIndex(0);
+        vista.campoAutor.setSelectedIndex(0);
+        vista.campoGenero.setText("");
+        vista.campoProd.setSelectedIndex(0);
+        vista.campoNumParticipantes.setValue(0);
+        vista.campoDuracion.setValue(0);
+        vista.españolCheckBox.setSelected(false);
+        vista.inglesCheckBox.setSelected(false);
+        vista.dembowCheckBox.setSelected(false);
+    }
+
+
     private void borrarCamposProductora(){
         vista.campoNombreProd.setText("");
         vista.comboLocalizacion.setSelectedIndex(0);
@@ -279,16 +355,17 @@ public class Controlador extends Component implements ActionListener, ItemListen
     }
     private void borrarCamposAlbum(){
         vista.campoTituloAlbum.setText("");
-        vista.campoAutor.setSelectedIndex(-1);
+        vista.comboAutores.setSelectedIndex(0);
         vista.campoNumCanciones.setValue(1);
         vista.campoDuracion.setValue(30);
         vista.campoFechaSalidaAlbum.setText("");
-        vista.campoProd.setSelectedIndex(-1);
+        vista.comboProductora.setSelectedIndex(0);
     }
 
     private void refrescarAutores(){
         try {
             vista.tablaAutor.setModel(construirTableModelAutores(modelo.consultarAutores()));
+            vista.comboAutores.removeAllItems();
             vista.campoAutor.removeAllItems();
             for(int i = 0; i < vista.dtmAutores.getRowCount(); i++) {
                 vista.campoAutor.addItem(vista.dtmAutores.getValueAt(i, 0)+" - "+
@@ -309,7 +386,7 @@ public class Controlador extends Component implements ActionListener, ItemListen
             Vector<String> nombreColumnas = new Vector<>();
             int columnCount = metaData.getColumnCount();
             for (int column = 1; column <= columnCount; column++){
-                nombreColumnas.add(metaData.getColumnName(column));
+                nombreColumnas.add(metaData.getColumnLabel(column));
             }
 
         //datis de la tabla
@@ -343,7 +420,7 @@ public class Controlador extends Component implements ActionListener, ItemListen
         Vector<String> nombreColumnas = new Vector<>();
         int numeroColumnas = metaData.getColumnCount();
         for (int column = 1; column <= numeroColumnas; column++){
-            nombreColumnas.add(metaData.getColumnName(column));
+            nombreColumnas.add(metaData.getColumnLabel(column));
         }
 
         //datos de la tabla
@@ -379,7 +456,7 @@ public class Controlador extends Component implements ActionListener, ItemListen
         Vector<String> nombreColumnas = new Vector<>();
         int numeroColumnas = metaData.getColumnCount();
         for (int column = 1; column <= numeroColumnas; column++){
-            nombreColumnas.add(metaData.getColumnName(column));
+            nombreColumnas.add(metaData.getColumnLabel(column));
         }
 
         //datos de la tabla
@@ -389,6 +466,34 @@ public class Controlador extends Component implements ActionListener, ItemListen
         vista.dtmProductora.setDataVector(data, nombreColumnas);
 
         return vista.dtmProductora;
+    }
+
+    private DefaultTableModel construirTableModelCanciones(ResultSet rs) throws SQLException {
+        ResultSetMetaData metaData = rs.getMetaData();
+
+        //nombre de las columnas
+
+        Vector<String> nombreColumnas = new Vector<>();
+        int numeroColumnas = metaData.getColumnCount();
+        for (int column = 1; column <= numeroColumnas; column++){
+            nombreColumnas.add(metaData.getColumnLabel(column));
+        }
+
+        //datos de la tabla
+        Vector<Vector<Object>> data = new Vector<>();
+        setDataVector(rs, numeroColumnas, data);
+
+        vista.dtmCanciones.setDataVector(data, nombreColumnas);
+
+        return vista.dtmCanciones;
+    }
+
+    private void refrescarCanciones(){
+        try {
+            vista.tablaCanciones.setModel(construirTableModelCanciones(modelo.consultarCancion()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setDataVector(ResultSet rs, int columnCount, Vector<Vector<Object>> data) throws SQLException {

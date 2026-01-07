@@ -1,9 +1,9 @@
 package main;
 
-import bbdd.Conexion;
-import gui.Controlador;
-import gui.Modelo;
-import gui.Vista;
+        import bbdd.Conexion;
+        import gui.Controlador;
+        import gui.Modelo;
+        import gui.Vista;
 
 public class Principal {
     public static void main(String[] args) {

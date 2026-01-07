@@ -4,7 +4,7 @@ import com.github.lgooddatepicker.components.DatePicker;
 import com.sun.jdi.JDIPermission;
 import gui.base.enums.LocalizacionProductora;
 import gui.base.enums.PaisAutor;
-import javafx.beans.binding.ObjectBinding;
+
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
