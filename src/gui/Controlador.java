@@ -59,6 +59,14 @@ public class Controlador extends Component implements ActionListener, ItemListen
         vista.botonAñadirProductora.setActionCommand("anadirProd");
         vista.añadirButton.addActionListener(listener);
         vista.añadirButton.setActionCommand("anadirCancion");
+        vista.eliminarButton.addActionListener(listener);
+        vista.eliminarButton.setActionCommand("eliminarCancion");
+        vista.botonEliminarAutor.addActionListener(listener);
+        vista.botonEliminarAutor.setActionCommand("eliminarAutor");
+        vista.botonEliminarAlbum.addActionListener(listener);
+        vista.botonEliminarAlbum.setActionCommand("eliminarAlbum");
+        vista.botonEliminarProd.addActionListener(listener);
+        vista.botonEliminarProd.setActionCommand("eliminarProductora");
         vista.optionDialog.botonGuardarOpciones.addActionListener(listener);
         vista.optionDialog.botonGuardarOpciones.setActionCommand("guardarOpciones");
         vista.itemOpciones.addActionListener(listener);
@@ -92,6 +100,22 @@ public class Controlador extends Component implements ActionListener, ItemListen
             }
             case "anadirProd":{
                 registrarProductora();
+                break;
+            }
+            case "eliminarCancion":{
+                eliminarCancion();
+                break;
+            }
+            case "eliminarAutor":{
+                eliminarAutor();
+                break;
+            }
+            case "eliminarAlbum":{
+                eliminarAlbum();
+                break;
+            }
+            case "eliminarProductora":{
+                eliminarProductora();
                 break;
             }
 
@@ -187,6 +211,38 @@ public class Controlador extends Component implements ActionListener, ItemListen
 
     }
 
+    void eliminarAutor(){
+        int fila = vista.tablaAutor.getSelectedRow();
+        if(fila == -1){
+            JOptionPane.showMessageDialog(null, "Selecciona algun autor en la tabla");
+            return;
+        }
+
+        Integer idAutor = (Integer) vista.tablaAutor.getValueAt(fila,0);
+        Object nombre = vista.tablaAutor.getValueAt(fila, 1);
+
+        int opcion = JOptionPane.showConfirmDialog(
+                vista,
+                "¿Seguro que quieres eliminar este autor?\n(" + nombre + ", con ID " + idAutor + ")",
+                "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+
+        if (modelo.autorConCanciones(idAutor)) {
+            JOptionPane.showMessageDialog(vista, "No se puede eliminar porque este autor tiene canciones y álbumes asociados.");
+            return;
+        }
+
+        if (opcion == JOptionPane.YES_OPTION) {
+            modelo.eliminarAutor(idAutor);
+            borrarCamposAutor();
+            refrescarAutores();
+            JOptionPane.showMessageDialog(vista, "Autor eliminado.");
+        }
+
+    }
+
     public void registrarAlbum(){
         if (!Util.comprobarCampoVacio(vista.campoTituloAlbum)){
             Util.lanzaAlertaVacio(vista.campoTituloAlbum);
@@ -230,6 +286,35 @@ public class Controlador extends Component implements ActionListener, ItemListen
         }
     }
 
+    void eliminarAlbum(){
+        int fila = vista.tablaAlbum.getSelectedRow();
+        if(fila == -1){
+            JOptionPane.showMessageDialog(null, "Selecciona algun álbum en la tabla");
+            return;
+        }
+
+        Integer idAlbum = (Integer) vista.tablaAlbum.getValueAt(fila,0);
+        Object nombre = vista.tablaAlbum.getValueAt(fila, 2);
+
+        int opcion = JOptionPane.showConfirmDialog(
+                vista,
+                "¿Seguro que quieres eliminar este álbum?\n(" + nombre + ", con ID " + idAlbum + ")",
+                "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+
+        if (opcion == JOptionPane.YES_OPTION) {
+            modelo.eliminarAlbum(idAlbum);
+            borrarCamposAlbum();
+            refrescarAlbum();
+            JOptionPane.showMessageDialog(vista, "Álbum eliminado.");
+        }
+
+    }
+
+
+
     public void registrarProductora() {
         if (!Util.comprobarCampoVacio(vista.campoNombreProd)) {
             Util.lanzaAlertaVacio(vista.campoNombreProd);
@@ -267,6 +352,38 @@ public class Controlador extends Component implements ActionListener, ItemListen
             }
 
         }
+    }
+
+    void eliminarProductora(){
+        int fila = vista.tablaProductora.getSelectedRow();
+        if(fila == -1){
+            JOptionPane.showMessageDialog(null, "Selecciona alguna productora en la tabla");
+            return;
+        }
+
+        Integer idProductora = (Integer) vista.tablaProductora.getValueAt(fila,0);
+        Object nombre = vista.tablaProductora.getValueAt(fila, 1);
+
+        int opcion = JOptionPane.showConfirmDialog(
+                vista,
+                "¿Seguro que quieres eliminar esta productora?\n(" + nombre + ", con ID " + idProductora + ")",
+                "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+
+        if (modelo.productoraConCanciones(idProductora)) {
+            JOptionPane.showMessageDialog(vista, "No se puede eliminar porque hay canciones asociadas a esta productora.");
+            return;
+        }
+
+        if (opcion == JOptionPane.YES_OPTION) {
+            modelo.eliminarProductora(idProductora);
+            borrarCamposProductora();
+            refrescarProductoras();
+            JOptionPane.showMessageDialog(vista, "Productora eliminado.");
+        }
+
     }
 
     public void registrarCancion() {
@@ -321,6 +438,33 @@ public class Controlador extends Component implements ActionListener, ItemListen
                 JOptionPane.showMessageDialog(null, "Canción no registrada");
             }
         }
+    }
+
+    void eliminarCancion(){
+        int fila = vista.tablaCanciones.getSelectedRow();
+        if(fila == -1){
+            JOptionPane.showMessageDialog(null, "Selecciona alguna canción en la tabla");
+            return;
+        }
+
+        Integer idCancion = (Integer) vista.tablaCanciones.getValueAt(fila,0);
+        Object nombre = vista.tablaCanciones.getValueAt(fila, 1);
+
+        int opcion = JOptionPane.showConfirmDialog(
+                vista,
+                "¿Seguro que quieres eliminar esta canción?\n(" + nombre + ", con ID " + idCancion + ")",
+                "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+
+        if (opcion == JOptionPane.YES_OPTION) {
+            modelo.eliminarCancion(idCancion);
+            borrarCamposCancion();
+            refrescarCanciones();
+            JOptionPane.showMessageDialog(vista, "Canción eliminado.");
+        }
+
     }
 
     private void borrarCamposCancion() {

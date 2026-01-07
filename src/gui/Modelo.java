@@ -230,7 +230,7 @@ public class Modelo {
 
     ResultSet consultarCancion() throws SQLException {
         String SQL =
-                "SELECT c.titulo AS 'Título', a.nombreArtistico AS 'Autor', c.genero AS 'Género', p.nombre AS 'Productora', " +
+                "SELECT c.idCancion as 'ID', c.titulo AS 'Título', a.nombreArtistico AS 'Autor', c.genero AS 'Género', p.nombre AS 'Productora', " +
                         "c.participantes AS 'Participantes', c.duracion AS 'Duración', c.idioma AS 'Idioma', " +
                         "c.valoracion AS 'Valoración', al.titulo AS 'Album' FROM cancion c " +
                         "INNER JOIN autor a ON c.idAutor = a.idAutor " +
@@ -258,4 +258,110 @@ public class Modelo {
         }
     }
 
+
+    void eliminarAutor(int idAutor){
+        String SQL = "DELETE FROM autor WHERE idAutor = ?";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = Conexion.conn.prepareStatement(SQL);
+            sentencia.setInt(1,idAutor);
+            sentencia.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+    boolean autorConCanciones(int idAutor){
+        String SQL = "SELECT 1 FROM album WHERE idAutor=? LIMIT 1";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(SQL)) {
+            ps.setInt(1, idAutor);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
+
+    void eliminarCancion(int idCancion){
+        String SQL = "DELETE FROM cancion WHERE idCancion = ?";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = Conexion.conn.prepareStatement(SQL);
+            sentencia.setInt(1,idCancion);
+            sentencia.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    void eliminarAlbum(int idAlbum){
+        String SQL = "DELETE FROM album WHERE idAlbum = ?";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = Conexion.conn.prepareStatement(SQL);
+            sentencia.setInt(1,idAlbum);
+            sentencia.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+
+    void eliminarProductora(int idProductora){
+        String SQL = "DELETE FROM productora WHERE idProductora = ?";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = Conexion.conn.prepareStatement(SQL);
+            sentencia.setInt(1,idProductora);
+            sentencia.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    boolean productoraConCanciones(int idProductora){
+        String sql = "SELECT 1 FROM cancion WHERE idProductora = ? LIMIT 1";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
+            ps.setInt(1, idProductora);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return true; // por seguridad, asumimos que sí
+        }
+    }
 }
