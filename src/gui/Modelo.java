@@ -129,9 +129,11 @@ public class Modelo {
 
     ResultSet consultarAlbum() throws SQLException {
         String SQL = "SELECT a.idAlbum as 'ID', au.nombreArtistico as 'Autor', a.titulo as 'titulo', a.numeroCanciones as 'Numero Canciones', "+
-                "a.duracionMinutos as 'Duracion en Minutos', a.fechaSalida as 'Fecha de Salida', a.idProductora as 'Productora' FROM album as a "+
+                "a.duracionMinutos as 'Duracion en Minutos', a.fechaSalida as 'Fecha de Salida', prod.nombre as 'Productora' FROM album as a "+
                 "inner join autor as au" +
-                " on a.idAutor = au.idAutor";
+                " on a.idAutor = au.idAutor " +
+                "inner join productora as prod " +
+                "on a.idProductora = prod.idProductora";
         PreparedStatement sentencia = null;
         ResultSet resultado = null;
         sentencia = Conexion.conn.prepareStatement(SQL);
