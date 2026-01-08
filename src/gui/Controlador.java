@@ -69,6 +69,8 @@ public class Controlador extends Component implements ActionListener, ItemListen
         vista.botonEliminarAlbum.setActionCommand("eliminarAlbum");
         vista.botonEliminarProd.addActionListener(listener);
         vista.botonEliminarProd.setActionCommand("eliminarProductora");
+        vista.botonModificarAutor.addActionListener(listener);
+        vista.botonModificarAutor.setActionCommand("actualizarAutor");
         vista.optionDialog.botonGuardarOpciones.addActionListener(listener);
         vista.optionDialog.botonGuardarOpciones.setActionCommand("guardarOpciones");
         vista.itemOpciones.addActionListener(listener);
@@ -118,6 +120,11 @@ public class Controlador extends Component implements ActionListener, ItemListen
             }
             case "eliminarProductora": {
                 eliminarProductora();
+                break;
+            }
+
+            case"actualizarAutor":{
+                actualizarAutor();
                 break;
             }
 
@@ -213,9 +220,6 @@ public class Controlador extends Component implements ActionListener, ItemListen
 
     }
 
-    void modificarAutor() {
-
-    }
 
     void eliminarAutor() {
         int fila = vista.tablaAutor.getSelectedRow();
@@ -810,4 +814,50 @@ public class Controlador extends Component implements ActionListener, ItemListen
             }
         }
     }
+
+    private void actualizarAutor(){
+        int row = vista.tablaAutor.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(null, "Selecciona un autor en la tabla para modificar.");
+            return;
+        }
+        if (!Util.comprobarCampoVacio(vista.campoNombreArtistico)) {
+            Util.lanzaAlertaVacio(vista.campoNombreArtistico);
+        } else if (!Util.comprobarCampoVacio(vista.campoNombreReal)) {
+            Util.lanzaAlertaVacio(vista.campoNombreReal);
+        } else if (!Util.comprobarSpinner(vista.campoEdad)) {
+            JOptionPane.showMessageDialog(null, "El campo edad no puede ser menor que 13");
+        } else if (Util.comprobarCombobox(vista.campoPais)) {
+            Util.lanzaAlertaCombo(vista.campoPais);
+        } else if (Util.campoVacioCalendario(vista.campoFechaPrimeraPubli)) {
+            Util.lanzaAlertaVacioCalendar(vista.campoFechaPrimeraPubli);
+        } else {
+            int idAutor = Integer.parseInt(String.valueOf(vista.tablaAutor.getValueAt(row, 0)));
+
+            boolean gira = vista.siRadioButton.isSelected();
+            String nombreArtistico = vista.campoNombreArtistico.getText();
+            String nombreReal = vista.campoNombreReal.getText();
+            int edad = (int) vista.campoEdad.getValue();
+            String pais = vista.campoPais.getSelectedItem().toString();
+            LocalDate fecha = vista.campoFechaPrimeraPubli.getDate();
+            Autor a = new Autor(nombreArtistico, nombreReal, edad, pais, fecha, gira);
+
+            if (modelo.existeAutorExceptoId( nombreArtistico,  idAutor)){
+                JOptionPane.showMessageDialog(null, "Ya existe otro autor con este nombre ");
+                vista.campoNombreArtistico.setText("");
+                return;
+            }
+
+            if (modelo.modificarAutor(a)) {
+                JOptionPane.showMessageDialog(null, "El autor ha sido actualizado correctamente");
+                borrarCamposAutor();
+                refrescarAutores();
+            } else {
+                JOptionPane.showMessageDialog(null, "El autor no se ha modificado");
+            }
+        }
+
+    }
+
+
 }

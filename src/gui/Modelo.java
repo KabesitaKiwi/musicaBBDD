@@ -6,12 +6,7 @@ import modelo.Autor;
 import modelo.Canciones;
 import modelo.Productora;
 
-import javax.swing.*;
-import javax.xml.transform.Result;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 
 public class Modelo {
@@ -363,7 +358,56 @@ public class Modelo {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return true; // por seguridad, asumimos que sí
+            return true;
         }
     }
+
+    boolean modificarAutor(Autor au){
+        String SQL = "UPDATE autor set nombreArtistico =?, nombreReal=?, edad =?, pais=?, fechaPrimeraPublicacion=?, gira =?" +
+                " where idAutor =?";
+        PreparedStatement sentencia = null;
+        try {
+            sentencia = Conexion.conn.prepareStatement(SQL);
+            sentencia.setString(1, au.getNombreArtistico());
+            sentencia.setString(2, au.getNombreReal());
+            sentencia.setInt(3, au.getEdad());
+            sentencia.setString(4, au.getPais());
+            LocalDate fecha = au.getFechaPublicacion();
+            if (fecha == null) {
+                sentencia.setNull(5, java.sql.Types.DATE);
+            } else {
+                sentencia.setDate(5, java.sql.Date.valueOf(fecha)); //aqui por incompatibilidad de LocalDate y Date de la base de datos, convierto el valor de localDate a un Date para que funcione bien
+            }
+            sentencia.setBoolean(6, au.getGira());
+            sentencia.setInt(7,au.getIdAutor());
+
+
+            return sentencia.executeUpdate() >0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }finally {
+            if (sentencia != null){
+                try {
+                    sentencia.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    boolean existeAutorExceptoId(String nombreArtistico, int idAutor) {
+        String SQL = "SELECT 1 FROM autor WHERE nombreArtistico=? AND idAutor<>? LIMIT 1";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(SQL)) {
+            ps.setString(1, nombreArtistico);
+            ps.setInt(2, idAutor);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
