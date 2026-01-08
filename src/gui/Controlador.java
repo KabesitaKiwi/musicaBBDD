@@ -71,6 +71,12 @@ public class Controlador extends Component implements ActionListener, ItemListen
         vista.botonEliminarProd.setActionCommand("eliminarProductora");
         vista.botonModificarAutor.addActionListener(listener);
         vista.botonModificarAutor.setActionCommand("actualizarAutor");
+        vista.botonModificarAlbum.addActionListener(listener);
+        vista.botonModificarAlbum.setActionCommand("actualizarAlbum");
+        vista.botonModificarProd.addActionListener(listener);
+        vista.botonModificarProd.setActionCommand("actualizarProductora");
+        vista.modificarButton.addActionListener(listener);
+        vista.modificarButton.setActionCommand("actualizarCancion");
         vista.optionDialog.botonGuardarOpciones.addActionListener(listener);
         vista.optionDialog.botonGuardarOpciones.setActionCommand("guardarOpciones");
         vista.itemOpciones.addActionListener(listener);
@@ -125,6 +131,19 @@ public class Controlador extends Component implements ActionListener, ItemListen
 
             case"actualizarAutor":{
                 actualizarAutor();
+                break;
+            }
+
+            case "actualizarAlbum":{
+                actualizarAlbum();
+                break;
+            }
+            case "actualizarProductora":{
+                actualizarProductora();
+                break;
+            }
+            case "actualizarCancion": {
+                actualizarCancion();
                 break;
             }
 
@@ -256,11 +275,9 @@ public class Controlador extends Component implements ActionListener, ItemListen
     public void registrarAlbum() {
         if (!Util.comprobarCampoVacio(vista.campoTituloAlbum)) {
             Util.lanzaAlertaVacio(vista.campoTituloAlbum);
-        } else if (Util.comprobarCombobox(vista.comboAutores)) {
-            Util.lanzaAlertaCombo(vista.comboAutores);
-        } else if (Util.comprobarSpinner(vista.campoNumCanciones)) {
+        } else if (!Util.comprobarSpinner(vista.campoNumCanciones)) {
             JOptionPane.showMessageDialog(null, "El campo Numero de canciones no puede ser menor que 0");
-        } else if (Util.comprobarSpinner(vista.campoDuracion)) {
+        } else if (!Util.comprobarSpinner(vista.campoDuracion)) {
             JOptionPane.showMessageDialog(null, "El campo Duracion en minutos no puede ser menor que 0");
         } else if (Util.campoVacioCalendario(vista.campoFechaSalidaAlbum)) {
             Util.lanzaAlertaVacioCalendar(vista.campoFechaSalidaAlbum);
@@ -433,7 +450,12 @@ public class Controlador extends Component implements ActionListener, ItemListen
             Canciones c = new Canciones(titulo, Album, Autor, genero, Productora,
                     participantes, duracion, idioma.toString(), valoracion);
 
-            if (modelo.existeCancionPorAlbum(Album, titulo)) {
+            if (modelo.existeCancionPorAutor(Album, titulo)) {
+                JOptionPane.showMessageDialog(null, "Esa canción ya existe en ese álbum. Cambia el título o el álbum.");
+                vista.campoTituloCancion.setText("");
+                return;
+            }
+            if (modelo.existeCancionEnMismoAlbum(titulo, Album)) {
                 JOptionPane.showMessageDialog(null, "Esa canción ya existe en ese álbum. Cambia el título o el álbum.");
                 vista.campoTituloCancion.setText("");
                 return;
@@ -841,6 +863,7 @@ public class Controlador extends Component implements ActionListener, ItemListen
             String pais = vista.campoPais.getSelectedItem().toString();
             LocalDate fecha = vista.campoFechaPrimeraPubli.getDate();
             Autor a = new Autor(nombreArtistico, nombreReal, edad, pais, fecha, gira);
+            a.setIdAutor(idAutor);
 
             if (modelo.existeAutorExceptoId( nombreArtistico,  idAutor)){
                 JOptionPane.showMessageDialog(null, "Ya existe otro autor con este nombre ");
@@ -858,6 +881,165 @@ public class Controlador extends Component implements ActionListener, ItemListen
         }
 
     }
+    private void actualizarProductora(){
+        int row = vista.tablaProductora.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(null, "Selecciona una productora en la tabla para modificar.");
+            return;
+        }
+        if (!Util.comprobarCampoVacio(vista.campoNombreProd)) {
+            Util.lanzaAlertaVacio(vista.campoNombreProd);
+        } else if (Util.comprobarCombobox(vista.comboLocalizacion)) {
+            Util.lanzaAlertaCombo(vista.comboLocalizacion);
+        } else if (!Util.comprobarSpinner(vista.campoNumTrabajadores)) {
+            JOptionPane.showMessageDialog(null, "El campo Trabajadores no puede ser menor que 0");
+        } else if (Util.campoVacioCalendario(vista.campoFechaFundacion)) {
+            Util.lanzaAlertaVacioCalendar(vista.campoFechaFundacion);
+        } else if (!Util.comprobarCampoVacio(vista.campoPropietario)) {
+            Util.lanzaAlertaVacio(vista.campoPropietario);
+        } else {
 
+            int idProductora = Integer.parseInt(String.valueOf(vista.tablaProductora.getValueAt(row, 0)));
+
+            String nombre = vista.campoNombreProd.getText();
+            String localizacion = vista.comboLocalizacion.getSelectedItem().toString();
+            int numeroTrabajadores = (int) vista.campoNumTrabajadores.getValue();
+            LocalDate fechaFundacion = vista.campoFechaFundacion.getDate();
+            String propietario = vista.campoPropietario.getText();
+
+            Productora prod = new Productora(nombre, localizacion, numeroTrabajadores, fechaFundacion, propietario);
+            prod.setIdPord(idProductora);
+
+            if (modelo.existeProductoraExceptoId(nombre,idProductora)) {
+                JOptionPane.showMessageDialog(null, "Esta Productora ya existe, cambia el nombre");
+                vista.campoNombreProd.setText("");
+                return;
+            }
+
+            if (modelo.modificarProductora(prod)) {
+                JOptionPane.showMessageDialog(null, "La Productora ha sido actualizada correctamente");
+                borrarCamposProductora();
+                refrescarProductoras();
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Productora no Actualizada ");
+            }
+
+        }
+    }
+
+    private void actualizarAlbum(){
+        int row = vista.tablaAlbum.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(null, "Selecciona un album en la tabla para modificar.");
+            return;
+        }
+        if (!Util.comprobarCampoVacio(vista.campoTituloAlbum)) {
+            Util.lanzaAlertaVacio(vista.campoTituloAlbum);
+        } else if (!Util.comprobarSpinner(vista.campoNumCanciones)) {
+            JOptionPane.showMessageDialog(null, "El campo Numero de canciones no puede ser menor que 0");
+        } else if (!Util.comprobarSpinner(vista.campoDuracion)) {
+            JOptionPane.showMessageDialog(null, "El campo Duracion en minutos no puede ser menor que 0");
+        } else if (Util.campoVacioCalendario(vista.campoFechaSalidaAlbum)) {
+            Util.lanzaAlertaVacioCalendar(vista.campoFechaSalidaAlbum);
+        } else if (Util.comprobarCombobox(vista.comboProductora)) {
+            Util.lanzaAlertaCombo(vista.comboProductora);
+        } else {
+
+            int idAlbum = Integer.parseInt(String.valueOf(vista.tablaAlbum.getValueAt(row, 0)));
+
+            String titulo = vista.campoTituloAlbum.getText();
+            String itemAutor = vista.comboAutores.getSelectedItem().toString();
+            int autor = Integer.parseInt(itemAutor.split(" - ")[0].trim());
+            int numCanciones = ((Number) vista.campoNumCanciones.getValue()).intValue();
+            int duracionCanciones = ((Number) vista.campoDuracion.getValue()).intValue();
+            LocalDate fechaSalida = vista.campoFechaSalidaAlbum.getDate();
+            String itemProd = vista.comboProductora.getSelectedItem().toString();
+            int productora = Integer.parseInt(itemProd.split(" - ")[0].trim());
+
+            Album au = new Album(autor, titulo, numCanciones, duracionCanciones, fechaSalida, productora);
+            au.setIdAlbum(idAlbum);
+
+            if (modelo.existeAlbumAutorExceptoId(autor,titulo,idAlbum)) {
+                JOptionPane.showMessageDialog(null, "Este Album ya existe, cambia el nombre");
+                vista.campoNombreProd.setText("");
+                return;
+            }
+
+            if (modelo.modificarAlbum(au)) {
+                JOptionPane.showMessageDialog(null, "El album ha sido actualizado correctamente");
+                borrarCamposAlbum();
+                refrescarAlbum();
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Álbum no Actualizado ");
+            }
+        }
+    }
+
+    private void actualizarCancion(){
+        int row = vista.tablaCanciones.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(null, "Selecciona una cancion en la tabla para modificar.");
+            return;
+        }
+        if (!Util.comprobarCampoVacio(vista.campoTituloCancion)) {
+            Util.lanzaAlertaVacio(vista.campoTituloCancion);
+        } else if (!Util.comprobarCampoVacio(vista.campoGenero)) {
+            Util.lanzaAlertaVacio(vista.campoGenero);
+        } else if (!Util.comprobarSpinner(vista.campoNumParticipantes)) {
+            JOptionPane.showMessageDialog(null, "El Nº de participantes no puede ser menor que 0");
+        } else if (!Util.comprobarSpinner(vista.campoDuracion)) {
+            JOptionPane.showMessageDialog(null, "La duración no puede ser menor o igual que 0");
+        } else if (!vista.españolCheckBox.isSelected() && !vista.inglesCheckBox.isSelected() && !vista.dembowCheckBox.isSelected()) {
+            JOptionPane.showMessageDialog(null, "Selecciona al menos un idioma");
+        } else {
+            int idCancion = Integer.parseInt(String.valueOf(vista.tablaCanciones.getValueAt(row, 0)));
+
+            String titulo = vista.campoTituloCancion.getText();
+            String genero = vista.campoGenero.getText();
+
+            String itemAlbum = vista.campoALbum.getSelectedItem().toString();
+            int Album = Integer.parseInt(itemAlbum.split(" - ")[0]);
+
+            String itemAutor = vista.campoAutor.getSelectedItem().toString();
+            int Autor = Integer.parseInt(itemAutor.split(" - ")[0]);
+
+            String itemProd = vista.campoProd.getSelectedItem().toString();
+            int Productora = Integer.parseInt(itemProd.split(" - ")[0]);
+
+            int participantes = ((Number) vista.campoNumParticipantes.getValue()).intValue();
+            float duracion = ((Number) vista.campoDuracion.getValue()).floatValue();
+            int valoracion = vista.campoValoracion.getValue();
+
+            StringBuilder idioma = new StringBuilder();
+            if (vista.españolCheckBox.isSelected()) idioma.append("Español,");
+            if (vista.inglesCheckBox.isSelected()) idioma.append("Ingles,");
+            if (vista.dembowCheckBox.isSelected()) idioma.append("Dembow,");
+            idioma.deleteCharAt(idioma.length() - 1);
+
+            Canciones c = new Canciones(titulo, Album, Autor, genero, Productora,
+                    participantes, duracion, idioma.toString(), valoracion);
+
+            c.setIdCancion(idCancion);
+
+            if (modelo.existeCancionId(titulo,idCancion)) {
+                JOptionPane.showMessageDialog(null, "Esta cancion ya existe en ese album cambia el nombre o el album");
+                vista.campoNombreProd.setText("");
+                return;
+            }
+
+
+
+            if (modelo.modificarCancion(c)) {
+                JOptionPane.showMessageDialog(null, "La cancion ha sido actualizado correctamente");
+                borrarCamposCancion();
+                refrescarCanciones();
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Canción no Actualizada ");
+            }
+        }
+    }
 
 }

@@ -241,7 +241,7 @@ public class Modelo {
     }
 
 
-    public boolean existeCancionPorAlbum(int idAutor, String titulo) {
+    public boolean existeCancionPorAutor(int idAutor, String titulo) {
         String sql = "SELECT 1 FROM cancion WHERE idAutor = ? AND titulo = ? LIMIT 1";
         try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
             ps.setInt(1, idAutor);
@@ -254,6 +254,24 @@ public class Modelo {
             return false;
         }
     }
+
+    public boolean existeCancionEnMismoAlbum(String titulo, int idAlbum) {
+        String sql = "SELECT 1 FROM cancion WHERE titulo=? AND idAlbum=? LIMIT 1";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
+            ps.setString(1, titulo);
+            ps.setInt(2, idAlbum);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+
+
 
 
     void eliminarAutor(int idAutor){
@@ -409,5 +427,150 @@ public class Modelo {
             return false;
         }
     }
+
+    boolean modificarProductora(Productora prod){
+        String SQL = "UPDATE productora set nombre =?, localizacion=?, trabajadores =?, fechaFundacion=?, propietario =?" +
+                " where idProductora =?";
+        PreparedStatement sentencia = null;
+        try {
+            sentencia = Conexion.conn.prepareStatement(SQL);
+            sentencia.setString(1, prod.getNombre());
+            sentencia.setString(2, prod.getLocalizacion());
+            sentencia.setInt(3, prod.getTrabajadores());
+            LocalDate fecha = prod.getFechaFundacion();
+            if (fecha == null) {
+                sentencia.setNull(4, java.sql.Types.DATE);
+            } else {
+                sentencia.setDate(4, java.sql.Date.valueOf(fecha)); //aqui por incompatibilidad de LocalDate y Date de la base de datos, convierto el valor de localDate a un Date para que funcione bien
+            }
+            sentencia.setString(5, prod.getPropietario());
+            sentencia.setInt(6,prod.getIdPord());
+
+
+            return sentencia.executeUpdate() >0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }finally {
+            if (sentencia != null){
+                try {
+                    sentencia.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    boolean existeProductoraExceptoId(String nombre, int idProductora) {
+        String SQL = "SELECT 1 FROM productora WHERE nombre=? AND idProductora<>? LIMIT 1";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(SQL)) {
+            ps.setString(1, nombre);
+            ps.setInt(2, idProductora);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    boolean modificarAlbum(Album al){
+        String SQL = "UPDATE album set idAutor =?, titulo=?, numeroCanciones =?, duracionMinutos=?, fechaSalida =?, idProductora = ?" +
+                " where idAlbum =?";
+        PreparedStatement sentencia = null;
+        try {
+            sentencia = Conexion.conn.prepareStatement(SQL);
+            sentencia.setInt(1, al.getIdAutor());
+            sentencia.setString(2, al.getTitulo());
+            sentencia.setInt(3, al.getNumeroCanciones());
+            sentencia.setInt(4,al.getDuracionMins());
+            LocalDate fecha = al.getFechaSalida();
+            if (fecha == null) {
+                sentencia.setNull(5, java.sql.Types.DATE);
+            } else {
+                sentencia.setDate(5, java.sql.Date.valueOf(fecha)); //aqui por incompatibilidad de LocalDate y Date de la base de datos, convierto el valor de localDate a un Date para que funcione bien
+            }
+            sentencia.setInt(6, al.getIdProductora());
+            sentencia.setInt(7,al.getIdAlbum());
+
+
+            return sentencia.executeUpdate() >0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }finally {
+            if (sentencia != null){
+                try {
+                    sentencia.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public boolean existeAlbumAutorExceptoId(int idAutor, String titulo, int idAlbum) {
+        String sql = "SELECT 1 FROM album WHERE idAutor = ? AND titulo = ? AND idAlbum <> ? LIMIT 1";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
+            ps.setInt(1, idAutor);
+            ps.setString(2, titulo);
+            ps.setInt(3, idAlbum);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    boolean modificarCancion(Canciones c){
+        String SQL = "UPDATE cancion set titulo =?, idAutor=?, genero =?, idProductora=?, participantes =?, duracion = ?, " +
+                "idioma = ?, valoracion = ?, idAlbum = ? " +
+                "WHERE idCancion =?";
+        PreparedStatement sentencia = null;
+        try {
+            sentencia = Conexion.conn.prepareStatement(SQL);
+            sentencia.setString(1, c.getTitulo());
+            sentencia.setInt(2, c.getAutor());
+            sentencia.setString(3,c.getGenero());
+            sentencia.setInt(4, c.getProductora());
+            sentencia.setInt(5,c.getNumeroParticipantes());
+            sentencia.setFloat(6, c.getDuracion());
+            sentencia.setString(7, c.getIdioma());
+            sentencia.setInt(8, c.getValoracion());
+            sentencia.setInt(9, c.getAlbum());
+            sentencia.setInt(10,c.getIdCancion());
+
+
+            return sentencia.executeUpdate() >0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }finally {
+            if (sentencia != null){
+                try {
+                    sentencia.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    boolean existeCancionId(String titulo, int idCancion) {
+        String SQL = "SELECT 1 FROM cancion WHERE titulo=? AND idCancion<>? LIMIT 1";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(SQL)) {
+            ps.setString(1, titulo);
+            ps.setInt(2, idCancion);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
 }
