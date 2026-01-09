@@ -572,14 +572,53 @@ public class Modelo {
         }
     }
 
-    boolean buscarNombreCancion(String nombre) throws SQLException {
-        String SQL = "SELECT * FROM cancion where nombre =?";
-        try (PreparedStatement ps = Conexion.conn.prepareStatement(SQL)){
+    ResultSet buscarNombreCancion(String nombre) throws SQLException {
+        String SQL = "SELECT c.titulo, a.nombreArtistico as autor, c.genero as Género, p.nombre as productora, " +
+                "al.titulo as album, c.participantes as Participantes, c.duracion as Duración, " +
+                "c.idioma as Idioma, c.valoracion as Valoración FROM cancion c " +
+                "JOIN  autor a on c.idAutor = a.idAutor " +
+                "JOIN  productora p on c.idProductora = p.idProductora " +
+                "JOIN  album al on c.idAlbum = al.idAlbum " +
+                "where c.titulo = ?";
+        PreparedStatement ps = Conexion.conn.prepareStatement(SQL);
                 ps.setString(1, nombre);
-
                 ResultSet rs = ps.executeQuery();
-                return rs.next();
-        }
+                return rs;
+
     }
+
+    ResultSet buscarNombreProductora(String nombre) throws SQLException {
+        String SQL = "SELECT * from productora " +
+                "where nombre = ?";
+        PreparedStatement ps = Conexion.conn.prepareStatement(SQL);
+        ps.setString(1, nombre);
+        ResultSet rs = ps.executeQuery();
+        return rs;
+
+    }
+
+    ResultSet buscarNombreAutor(String nombre) throws SQLException {
+        String SQL = "SELECT * from autor " +
+                "WHERE nombreArtistico = ?";
+        PreparedStatement ps = Conexion.conn.prepareStatement(SQL);
+        ps.setString(1, nombre);
+        ResultSet rs = ps.executeQuery();
+        return rs;
+
+    }
+
+    ResultSet buscarNombreAlbum(String nombre) throws SQLException {
+        String SQL = "SELECT al.titulo as titulo, a.nombreArtistico as 'Autor', al.numeroCanciones as 'Numero canciones', al.numeroCanciones as 'Duración minutos', " +
+                " al.fechaSalida as 'fechaSalida', p.nombre as 'productora' FROM album al " +
+                "JOIN  productora p on al.idProductora = p.idProductora " +
+                "JOIN  autor a on al.idAutor = a.idAutor " +
+                "where al.titulo = ?";
+        PreparedStatement ps = Conexion.conn.prepareStatement(SQL);
+        ps.setString(1, nombre);
+        ResultSet rs = ps.executeQuery();
+        return rs;
+
+    }
+
 
 }

@@ -74,7 +74,6 @@ public class Vista extends JFrame{
     public DatePicker campoFechaFundacion;
     public JComboBox comboAutores;
     public JComboBox comboProductora;
-
     //busqueda
     private JLabel etiquetasEstado;
 
@@ -83,6 +82,7 @@ public class Vista extends JFrame{
     DefaultTableModel dtmAutores;
     DefaultTableModel dtmAlbum;
     DefaultTableModel dtmProductora;
+    DefaultTableModel dtmBusqueda;
 
     //menuBar
     JMenuItem itemOpciones;
@@ -99,6 +99,7 @@ public class Vista extends JFrame{
 
     //cuadro buscar
     VistaBuscar vistaBuscar;
+
 
 
     public Vista(){
@@ -173,9 +174,10 @@ public class Vista extends JFrame{
     private void setBuscarDialog() {
         vistaBuscar = new VistaBuscar(this);   // JFrame sirve como Frame owner
         vistaBuscar.setLocationRelativeTo(this);
+
     }
 
-    private void setTableModels(){
+    public void setTableModels(){
         //tablas de autores, de canciones, de albumes y de productoras
         this.dtmCanciones = new DefaultTableModel();
         this.tablaCanciones.setModel(dtmCanciones);
@@ -188,6 +190,8 @@ public class Vista extends JFrame{
 
         this.dtmProductora = new DefaultTableModel();
         this.tablaProductora.setModel(dtmProductora);
+
+
     }
 
     private void setEnumComboBox(){

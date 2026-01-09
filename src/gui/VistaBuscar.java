@@ -1,6 +1,7 @@
 package gui;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class VistaBuscar extends JDialog{
@@ -9,7 +10,12 @@ public class VistaBuscar extends JDialog{
     public JTextArea Resultado;
     public JLabel etiquetaCambiante;
     public JTextField campoLgtb;
+    public JTable tablaResultado;
+    public JButton botonBusqueda;
     private Frame owner;
+    public DefaultTableModel dtmBuscar;
+
+
 
     public VistaBuscar(Frame owner){
         super(owner, "BUSCAR", true);
@@ -24,5 +30,14 @@ public class VistaBuscar extends JDialog{
         this.setSize(new Dimension(this.getWidth()+200,this.getHeight()));
 
         this.setLocationRelativeTo(owner);
+
+        setTableModels();
     }
+
+    public void setTableModels(){
+        this.dtmBuscar = new DefaultTableModel();
+        this.tablaResultado.setModel(dtmBuscar);
+    }
+
+
 }

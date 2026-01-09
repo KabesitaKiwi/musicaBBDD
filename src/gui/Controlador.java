@@ -86,6 +86,10 @@ public class Controlador extends Component implements ActionListener, ItemListen
         vista.itemConectar.addActionListener(listener);
         vista.botonBuscar.addActionListener(listener);
         vista.botonBuscar.setActionCommand("Buscar");
+        vista.vistaBuscar.botonBusqueda.addActionListener(listener);
+        vista.vistaBuscar.botonBusqueda.setActionCommand("Busqueda");
+        vista.vistaBuscar.comboSeleccionarTabla.addActionListener(listener);
+        vista.vistaBuscar.comboSeleccionarTabla.setActionCommand("CambiarCosicas");
     }
 
     @Override
@@ -181,6 +185,17 @@ public class Controlador extends Component implements ActionListener, ItemListen
             case "actualizarCancion": {
                 actualizarCancion();
                 break;
+            }
+            case "Busqueda":{
+                try {
+                    buscar();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+                break;
+            }
+            case "CambiarCosicas":{
+                actualizarCombo();
             }
 
         }
@@ -700,6 +715,27 @@ public class Controlador extends Component implements ActionListener, ItemListen
         return vista.dtmCanciones;
     }
 
+    private DefaultTableModel construirTableModelBusqueda(ResultSet rs) throws SQLException {
+        ResultSetMetaData metaData = rs.getMetaData();
+
+        //nombre de las columnas
+
+        Vector<String> nombreColumnas = new Vector<>();
+        int numeroColumnas = metaData.getColumnCount();
+        for (int column = 1; column <= numeroColumnas; column++) {
+            nombreColumnas.add(metaData.getColumnLabel(column));
+        }
+
+        //datos de la tabla
+        Vector<Vector<Object>> data = new Vector<>();
+        setDataVector(rs, numeroColumnas, data);
+
+        vista.vistaBuscar.dtmBuscar.setDataVector(data, nombreColumnas);
+
+        return vista.vistaBuscar.dtmBuscar;
+    }
+
+
     private void refrescarCanciones() {
         try {
             vista.tablaCanciones.setModel(construirTableModelCanciones(modelo.consultarCancion()));
@@ -1080,14 +1116,69 @@ public class Controlador extends Component implements ActionListener, ItemListen
 
     void buscar() throws SQLException {
 
-        String valor = vista.vistaBuscar.comboSeleccionarTabla.getSelectedItem().toString();
 
         if(Util.comprobarCombobox(vista.vistaBuscar.comboSeleccionarTabla)){
             Util.lanzaAlertaCombo(vista.vistaBuscar.comboSeleccionarTabla);
-        }else if (valor.equals("Canciones")){
-            vista.vistaBuscar.etiquetaCambiante.setText("Titulo de la Canción");
-            modelo.buscarNombreCancion(vista.vistaBuscar.campoLgtb.getText());
-            vista.vistaBuscar.Resultado.setText();
+        }else if(!Util.comprobarCampoVacio(vista.vistaBuscar.campoLgtb)){
+            Util.lanzaAlertaVacio(vista.vistaBuscar.campoLgtb);
+        }else{
+
+            String valor = String.valueOf(vista.vistaBuscar.comboSeleccionarTabla.getSelectedItem());
+            String titulo = vista.vistaBuscar.campoLgtb.getText().trim();
+
+            ResultSet rs = null;
+
+            switch (valor){
+                case "Canciones":{
+                    vista.vistaBuscar.etiquetaCambiante.setText("Título de la Canción");
+                    rs = modelo.buscarNombreCancion(titulo);
+                    break;
+                }
+                case "Productoras":{
+                    vista.vistaBuscar.etiquetaCambiante.setText("Nombre de la Productora");
+                    rs = modelo.buscarNombreProductora(titulo);
+                    break;
+                }
+                case "Autores":{
+                    vista.vistaBuscar.etiquetaCambiante.setText("Nombre Artístico");
+                    rs = modelo.buscarNombreAutor(titulo);
+                    break;
+                }
+                case "Álbumes":{
+                    vista.vistaBuscar.etiquetaCambiante.setText("Título del Álbum");
+                    rs = modelo.buscarNombreAlbum(titulo);
+                    break;
+                }
+
+
+            }
+
+            DefaultTableModel model = construirTableModelBusqueda(rs);
+            vista.vistaBuscar.tablaResultado.setModel(model);
+
         }
+    }
+
+    void actualizarCombo(){
+        Object sel = vista.vistaBuscar.comboSeleccionarTabla.getSelectedItem();
+        if (sel == null) return;
+
+        String valor = sel.toString();
+
+        switch (valor){
+            case "Canciones":
+                vista.vistaBuscar.etiquetaCambiante.setText("Titulo de la Canción");
+                break;
+            case "Productoras":
+                vista.vistaBuscar.etiquetaCambiante.setText("Nombre de la productora");
+                break;
+            case "Autores":
+                vista.vistaBuscar.etiquetaCambiante.setText("Nombre Artístico");
+                break;
+            case "Álbumes":
+                vista.vistaBuscar.etiquetaCambiante.setText("Título del album");
+                break;
+        }
+
     }
 }
