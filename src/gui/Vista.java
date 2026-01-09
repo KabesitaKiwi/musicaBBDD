@@ -89,12 +89,17 @@ public class Vista extends JFrame{
     JMenuItem itemDesconectar;
     JMenuItem itemSalir;
     JMenuItem itemConectar;
+    JButton botonBuscar;
 
     //cuadro dialogo
     OptionDialog optionDialog;
     JDialog adminPasswordDialog;
     JButton botonValidar;
     JPasswordField campoContrasenya;
+
+    //cuadro buscar
+    VistaBuscar vistaBuscar;
+
 
     public Vista(){
         super(TITULO_FRAME);
@@ -113,6 +118,8 @@ public class Vista extends JFrame{
         this.setLocationRelativeTo(null);
         //crear cuadro del dialogo
         optionDialog = new OptionDialog(this);
+        //creo cuadro de dialogo buscar
+        vistaBuscar = new VistaBuscar(this);
         //llama al menu
         setMenu();
         //lamo cuadro de dialogo admin
@@ -121,6 +128,8 @@ public class Vista extends JFrame{
         setEnumComboBox();
         //cargo tableModels
         setTableModels();
+        //cargo buscar
+        setBuscarDialog();
     }
 
     private void setMenu() {
@@ -139,6 +148,9 @@ public class Vista extends JFrame{
         menu.add(itemSalir);
         mbBar.add(menu);
         mbBar.add(Box.createHorizontalGlue());
+        botonBuscar = new JButton("Buscar");
+        botonBuscar.setActionCommand("Buscar");
+        mbBar.add(botonBuscar);
         this.setJMenuBar(mbBar);
     }
 
@@ -156,6 +168,11 @@ public class Vista extends JFrame{
         adminPasswordDialog.setContentPane(jop);
         adminPasswordDialog.pack();
         adminPasswordDialog.setLocationRelativeTo(this);
+    }
+
+    private void setBuscarDialog() {
+        vistaBuscar = new VistaBuscar(this);   // JFrame sirve como Frame owner
+        vistaBuscar.setLocationRelativeTo(this);
     }
 
     private void setTableModels(){

@@ -572,5 +572,14 @@ public class Modelo {
         }
     }
 
+    boolean buscarNombreCancion(String nombre) throws SQLException {
+        String SQL = "SELECT * FROM cancion where nombre =?";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(SQL)){
+                ps.setString(1, nombre);
+
+                ResultSet rs = ps.executeQuery();
+                return rs.next();
+        }
+    }
 
 }

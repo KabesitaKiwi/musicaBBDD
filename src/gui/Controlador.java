@@ -84,6 +84,8 @@ public class Controlador extends Component implements ActionListener, ItemListen
         vista.itemDesconectar.addActionListener(listener);
         vista.botonValidar.addActionListener(listener);
         vista.itemConectar.addActionListener(listener);
+        vista.botonBuscar.addActionListener(listener);
+        vista.botonBuscar.setActionCommand("Buscar");
     }
 
     @Override
@@ -106,6 +108,10 @@ public class Controlador extends Component implements ActionListener, ItemListen
             case "Conectar":
                 conexion.conectar();
                 JOptionPane.showMessageDialog(null, "Usted ha vuelto a conectar con la base de datos, todo funcionará a la perfeccion nuevamente");
+                break;
+
+            case "Buscar":
+                vista.vistaBuscar.setVisible(true);
                 break;
 
             case "abrirOpciones":
@@ -1072,4 +1078,16 @@ public class Controlador extends Component implements ActionListener, ItemListen
         }
     }
 
+    void buscar() throws SQLException {
+
+        String valor = vista.vistaBuscar.comboSeleccionarTabla.getSelectedItem().toString();
+
+        if(Util.comprobarCombobox(vista.vistaBuscar.comboSeleccionarTabla)){
+            Util.lanzaAlertaCombo(vista.vistaBuscar.comboSeleccionarTabla);
+        }else if (valor.equals("Canciones")){
+            vista.vistaBuscar.etiquetaCambiante.setText("Titulo de la Canción");
+            modelo.buscarNombreCancion(vista.vistaBuscar.campoLgtb.getText());
+            vista.vistaBuscar.Resultado.setText();
+        }
+    }
 }
