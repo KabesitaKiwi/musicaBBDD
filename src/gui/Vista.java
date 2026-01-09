@@ -88,6 +88,7 @@ public class Vista extends JFrame{
     JMenuItem itemOpciones;
     JMenuItem itemDesconectar;
     JMenuItem itemSalir;
+    JMenuItem itemConectar;
 
     //cuadro dialogo
     OptionDialog optionDialog;
@@ -131,6 +132,8 @@ public class Vista extends JFrame{
         itemDesconectar.setActionCommand("Desconectar");
         itemSalir = new JMenuItem("Salir");
         itemSalir.setActionCommand("Salir");
+        itemConectar = new JMenuItem("Conectar");
+        itemConectar.setActionCommand("Conectar");
         menu.add(itemOpciones);
         menu.add(itemDesconectar);
         menu.add(itemSalir);

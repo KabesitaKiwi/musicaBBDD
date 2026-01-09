@@ -80,6 +80,10 @@ public class Controlador extends Component implements ActionListener, ItemListen
         vista.optionDialog.botonGuardarOpciones.addActionListener(listener);
         vista.optionDialog.botonGuardarOpciones.setActionCommand("guardarOpciones");
         vista.itemOpciones.addActionListener(listener);
+        vista.itemSalir.addActionListener(listener);
+        vista.itemDesconectar.addActionListener(listener);
+        vista.botonValidar.addActionListener(listener);
+        vista.itemConectar.addActionListener(listener);
     }
 
     @Override
@@ -87,6 +91,32 @@ public class Controlador extends Component implements ActionListener, ItemListen
         String command = e.getActionCommand();
 
         switch (command) {
+            case "Opciones":
+                vista.adminPasswordDialog.setVisible(true);
+                break;
+
+            case "Desconectar":
+                conexion.desconectar();
+                JOptionPane.showMessageDialog(null, "Usted ha desconectado con la base de datos ten en cuenta que no va a funcionar casi nada hasta que lo vuelvas a conectar");
+                break;
+
+            case "Salir":
+                System.exit(0);
+                break;
+            case "Conectar":
+                conexion.conectar();
+                JOptionPane.showMessageDialog(null, "Usted ha vuelto a conectar con la base de datos, todo funcionará a la perfeccion nuevamente");
+                break;
+
+            case "abrirOpciones":
+                if(String.valueOf(vista.campoContrasenya.getPassword()).equals(conexion.getAdminContra())) {
+                    vista.campoContrasenya.setText("");
+                    vista.adminPasswordDialog.dispose();
+                    vista.optionDialog.setVisible(true);
+                } else {
+                    Util.showErrorAlert("La contraseña introducida no es correcta.");
+                }
+                break;
             case "anadirCancion": {
                 registrarCancion();
                 break;
