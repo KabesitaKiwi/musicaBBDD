@@ -1,5 +1,6 @@
 package gui;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import com.github.lgooddatepicker.components.DatePicker;
 import com.sun.jdi.JDIPermission;
 import gui.base.enums.LocalizacionProductora;
@@ -111,6 +112,9 @@ public class Vista extends JFrame{
     public void initFrame() {
         this.setContentPane(panel1);
 
+        //cargo el tema rosa
+        aplicarTemaRosa();
+
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.pack();
 
@@ -146,6 +150,7 @@ public class Vista extends JFrame{
         itemConectar.setActionCommand("Conectar");
         menu.add(itemOpciones);
         menu.add(itemDesconectar);
+        menu.add(itemConectar);
         menu.add(itemSalir);
         mbBar.add(menu);
         mbBar.add(Box.createHorizontalGlue());
@@ -244,5 +249,47 @@ public class Vista extends JFrame{
         campoPais.setSelectedIndex(0);
     }
 
+    public void aplicarTemaRosa() {
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Color pink = Color.decode("#FF4D8D");
+        Color pinkSoft = Color.decode("#FFB3CD");
+        Color bg = Color.decode("#FFF0F6");
+        Color header = Color.decode("#FFE1EE");
+        Color textDark = Color.decode("#4A0030");
+
+        UIManager.put("Panel.background", bg);
+
+        UIManager.put("Component.arc", 14);
+        UIManager.put("Button.arc", 14);
+        UIManager.put("TextComponent.arc", 14);
+
+        UIManager.put("Component.focusColor", pink);
+        UIManager.put("Component.borderColor", pinkSoft);
+
+        UIManager.put("Button.background", pink);
+        UIManager.put("Button.foreground", Color.WHITE);
+        UIManager.put("Button.hoverBackground", Color.decode("#FF2F7D"));
+        UIManager.put("Button.pressedBackground", Color.decode("#E8266C"));
+
+        UIManager.put("TextField.selectionBackground", pinkSoft);
+        UIManager.put("TextField.selectionForeground", Color.BLACK);
+
+        UIManager.put("Table.selectionBackground", pinkSoft);
+        UIManager.put("Table.selectionForeground", Color.BLACK);
+
+        UIManager.put("TableHeader.background", header);
+        UIManager.put("TableHeader.foreground", textDark);
+
+        for (Window w : Window.getWindows()) {
+            SwingUtilities.updateComponentTreeUI(w);
+            w.pack();
+            w.repaint();
+        }
+    }
 
 }

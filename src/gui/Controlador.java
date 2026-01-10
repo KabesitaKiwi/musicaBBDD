@@ -382,6 +382,11 @@ public class Controlador extends Component implements ActionListener, ItemListen
                 JOptionPane.WARNING_MESSAGE
         );
 
+        if (modelo.albumConCanciones(idAlbum)) {
+            JOptionPane.showMessageDialog(vista, "No se puede eliminar porque hay canciones asociadas a esta productora.");
+            return;
+        }
+
         if (opcion == JOptionPane.YES_OPTION) {
             modelo.eliminarAlbum(idAlbum);
             borrarCamposAlbum();
@@ -1181,4 +1186,6 @@ public class Controlador extends Component implements ActionListener, ItemListen
         }
 
     }
+
+
 }

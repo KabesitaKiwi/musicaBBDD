@@ -58,16 +58,20 @@ public class Modelo {
     }
 
     public boolean existeAutor(String nombreArtistico) {
-        String sql = "SELECT 1 FROM autor WHERE nombreArtistico = ? LIMIT 1";
-        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
-            ps.setString(1, nombreArtistico);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
-            }
+        String SQL = "SELECT existeAutor(?)";
+        PreparedStatement function;
+        boolean existe = false;
+        try {
+            function = Conexion.conn.prepareStatement(SQL);
+            function.setString(1, nombreArtistico);
+            ResultSet rs = function.executeQuery();
+            rs.next();
+
+            existe = rs.getBoolean(1);
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return existe;
     }
 
 
@@ -109,17 +113,21 @@ public class Modelo {
     }
 
     public boolean existeAlbumPorAutor(int idAutor, String titulo) {
-        String sql = "SELECT 1 FROM album WHERE idAutor = ? AND titulo = ? LIMIT 1";
-        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
-            ps.setInt(1, idAutor);
-            ps.setString(2, titulo);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
-            }
+        String sql = "SELECT existeAlbumAutor(?, ?)";
+        PreparedStatement function;
+        boolean existe = false;
+        try {
+            function = Conexion.conn.prepareStatement(sql);
+            function.setInt(1, idAutor);
+            function.setString(2, titulo);
+            ResultSet rs = function.executeQuery();
+            rs.next();
+
+            existe = rs.getBoolean(1);
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return existe;
     }
 
     ResultSet consultarAlbum() throws SQLException {
@@ -181,16 +189,20 @@ public class Modelo {
     }
 
     public boolean existeProductora(String nombreProd) {
-        String sql = "SELECT 1 FROM productora WHERE nombre = ? LIMIT 1";
-        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
-            ps.setString(1, nombreProd);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
-            }
+        String sql = "SELECT existeProductora(?)";
+        PreparedStatement function;
+        boolean existe = false;
+        try {
+            function = Conexion.conn.prepareStatement(sql);
+            function.setString(1, nombreProd);
+            ResultSet rs = function.executeQuery();
+            rs.next();
+
+            existe = rs.getBoolean(1);
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return existe;
     }
 
     boolean insertarCanciones(Canciones can){
@@ -242,12 +254,13 @@ public class Modelo {
 
 
     public boolean existeCancionPorAutor(int idAutor, String titulo) {
-        String sql = "SELECT 1 FROM cancion WHERE idAutor = ? AND titulo = ? LIMIT 1";
-        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
+        String SQL = "SELECT EXISTS(SELECT 1 FROM cancion WHERE idAutor = ? AND titulo = ?)";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(SQL)) {
             ps.setInt(1, idAutor);
             ps.setString(2, titulo);
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
+                rs.next();
+                return rs.getBoolean(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -256,17 +269,21 @@ public class Modelo {
     }
 
     public boolean existeCancionEnMismoAlbum(String titulo, int idAlbum) {
-        String sql = "SELECT 1 FROM cancion WHERE titulo=? AND idAlbum=? LIMIT 1";
-        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
-            ps.setString(1, titulo);
-            ps.setInt(2, idAlbum);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
-            }
+        String sql = "SELECT existeCancionAlbum(?, ?)";
+        PreparedStatement function;
+        boolean existe = false;
+        try {
+            function = Conexion.conn.prepareStatement(sql);
+            function.setInt(1, idAlbum);
+            function.setString(2, titulo);
+            ResultSet rs = function.executeQuery();
+            rs.next();
+
+            existe = rs.getBoolean(1);
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return existe;
     }
 
 
@@ -294,11 +311,26 @@ public class Modelo {
         }
     }
     boolean autorConCanciones(int idAutor){
-        String SQL = "SELECT 1 FROM album WHERE idAutor=? LIMIT 1";
-        try (PreparedStatement ps = Conexion.conn.prepareStatement(SQL)) {
+        String sql = "SELECT EXISTS(SELECT 1 FROM album WHERE idAutor = ?)";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
             ps.setInt(1, idAutor);
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
+                rs.next();
+                return rs.getBoolean(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
+
+    boolean albumConCanciones(int idAlbum){
+        String sql = "SELECT EXISTS(SELECT 1 FROM cancion WHERE idAlbum = ?)";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
+            ps.setInt(1, idAlbum);
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getBoolean(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -368,11 +400,12 @@ public class Modelo {
     }
 
     boolean productoraConCanciones(int idProductora){
-        String sql = "SELECT 1 FROM cancion WHERE idProductora = ? LIMIT 1";
-        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
+        String SQL = "SELECT EXISTS(SELECT 1 FROM cancion WHERE idProductora = ?)";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(SQL)) {
             ps.setInt(1, idProductora);
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
+                rs.next();
+                return rs.getBoolean(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -416,12 +449,14 @@ public class Modelo {
     }
 
     boolean existeAutorExceptoId(String nombreArtistico, int idAutor) {
-        String SQL = "SELECT 1 FROM autor WHERE nombreArtistico=? AND idAutor<>? LIMIT 1";
-        try (PreparedStatement ps = Conexion.conn.prepareStatement(SQL)) {
+        String sql = "SELECT EXISTS(SELECT 1 FROM autor WHERE nombreArtistico = ? AND idAutor <> ?)";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
             ps.setString(1, nombreArtistico);
             ps.setInt(2, idAutor);
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getBoolean(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -463,12 +498,14 @@ public class Modelo {
     }
 
     boolean existeProductoraExceptoId(String nombre, int idProductora) {
-        String SQL = "SELECT 1 FROM productora WHERE nombre=? AND idProductora<>? LIMIT 1";
-        try (PreparedStatement ps = Conexion.conn.prepareStatement(SQL)) {
+        String sql = "SELECT EXISTS(SELECT 1 FROM productora WHERE nombre = ? AND idProductora <> ?)";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
             ps.setString(1, nombre);
             ps.setInt(2, idProductora);
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getBoolean(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -511,13 +548,14 @@ public class Modelo {
     }
 
     public boolean existeAlbumAutorExceptoId(int idAutor, String titulo, int idAlbum) {
-        String sql = "SELECT 1 FROM album WHERE idAutor = ? AND titulo = ? AND idAlbum <> ? LIMIT 1";
-        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
+        String SQL = "SELECT EXISTS(SELECT 1 FROM album WHERE idAutor = ? AND titulo = ? AND idAlbum <> ?)";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(SQL)) {
             ps.setInt(1, idAutor);
             ps.setString(2, titulo);
             ps.setInt(3, idAlbum);
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
+                rs.next();
+                return rs.getBoolean(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -560,12 +598,14 @@ public class Modelo {
     }
 
     boolean existeCancionId(String titulo, int idCancion) {
-        String SQL = "SELECT 1 FROM cancion WHERE titulo=? AND idCancion<>? LIMIT 1";
-        try (PreparedStatement ps = Conexion.conn.prepareStatement(SQL)) {
+        String sql = "SELECT EXISTS(SELECT 1 FROM cancion WHERE titulo = ? AND idCancion <> ?)";
+        try (PreparedStatement ps = Conexion.conn.prepareStatement(sql)) {
             ps.setString(1, titulo);
             ps.setInt(2, idCancion);
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getBoolean(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
