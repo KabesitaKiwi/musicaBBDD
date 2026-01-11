@@ -46,7 +46,7 @@ public class Conexion {
         } catch (SQLException e) {
             try {
                 conn = DriverManager.getConnection(
-                        "jdbc:mysql://"+ip+":3306/musica",user,contra
+                        "jdbc:mysql://"+ip+":3306/",user,contra
                 );
                 PreparedStatement pst = null;
                 String code = leerFichero();

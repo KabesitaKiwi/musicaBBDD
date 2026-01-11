@@ -218,11 +218,11 @@ public class Vista extends JFrame{
     public void initComponents(){
         //valor predeterminado en diferentes spiner
 
-        SpinnerNumberModel duracionCancion = new SpinnerNumberModel(3.5, 0.0, 600.0, 0.5);
+        SpinnerNumberModel duracionCancion = new SpinnerNumberModel(3.5, 1, 600.0, 0.5);
         campoDuracion.setModel(duracionCancion);
 
 
-        SpinnerNumberModel duracionAlbum = new SpinnerNumberModel(15, 0.0, 600.0, 1);
+        SpinnerNumberModel duracionAlbum = new SpinnerNumberModel(15, 1, 600.0, 1);
         campoNumDuracion.setModel(duracionAlbum);
 
         SpinnerNumberModel edad = new SpinnerNumberModel(16, 14, 100, 1);

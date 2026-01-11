@@ -55,7 +55,6 @@ alter table album
 add foreign key (idAutor) references autor(idAutor),
 add foreign key (idProductora) references productora(idProductora);
 --
-delimiter ||
 create function existeAutor(f_nombreArtistico varchar(40))
 returns bit
 begin
@@ -68,11 +67,8 @@ begin
     end IF;
 
     return 0;
-END; ||
-
-DELIMITER ;
+END;
 --
-DELIMITER ||
 create function existeProductora(f_nombreProductora varchar(30))
 returns bit
 begin
@@ -85,12 +81,8 @@ begin
     end IF;
 
     return 0;
-END; ||
-
-DELIMITER ;
+END;
 --
-DELIMITER ||
-
 CREATE FUNCTION existeAlbumAutor(f_idAutor INT, f_titulo VARCHAR(30))
 RETURNS BIT
 BEGIN
@@ -104,12 +96,8 @@ BEGIN
     END IF;
 
     RETURN 0;
-END; ||
-
-DELIMITER ;
+END;
 --
-DELIMITER ||
-
 CREATE FUNCTION existeCancionAlbum(f_idAlbum INT, f_titulo VARCHAR(50))
 RETURNS BIT
 BEGIN
@@ -123,6 +111,4 @@ BEGIN
     END IF;
 
     RETURN 0;
-END; ||
-
-DELIMITER ;
+END;

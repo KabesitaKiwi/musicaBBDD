@@ -213,7 +213,7 @@ public class Controlador extends Component implements ActionListener, ItemListen
 
     @Override
     public void windowClosing(WindowEvent windowEvent) {
-
+        System.exit(0);
     }
 
     @Override
@@ -339,12 +339,12 @@ public class Controlador extends Component implements ActionListener, ItemListen
             String itemAutor = vista.comboAutores.getSelectedItem().toString();
             int autor = Integer.parseInt(itemAutor.split(" - ")[0].trim());
             int numCanciones = ((Number) vista.campoNumCanciones.getValue()).intValue();
-            int duracionCanciones = ((Number) vista.campoDuracion.getValue()).intValue();
+            int duracionAlbum = ((Number) vista.campoNumDuracion.getValue()).intValue();
             LocalDate fechaSalida = vista.campoFechaSalidaAlbum.getDate();
             String itemProd = vista.comboProductora.getSelectedItem().toString();
             int productora = Integer.parseInt(itemProd.split(" - ")[0].trim());
 
-            Album au = new Album(autor, titulo, numCanciones, duracionCanciones, fechaSalida, productora);
+            Album au = new Album(autor, titulo, numCanciones, duracionAlbum, fechaSalida, productora);
 
             if (modelo.existeAlbumPorAutor(au.getIdAutor(), au.getTitulo())) {
                 JOptionPane.showMessageDialog(null, "Este Artista ya tiene un album con ese nombre, cambia el arttista o el nombre del album");
@@ -1015,7 +1015,7 @@ public class Controlador extends Component implements ActionListener, ItemListen
             Util.lanzaAlertaVacio(vista.campoTituloAlbum);
         } else if (!Util.comprobarSpinner(vista.campoNumCanciones)) {
             JOptionPane.showMessageDialog(null, "El campo Numero de canciones no puede ser menor que 0");
-        } else if (!Util.comprobarSpinner(vista.campoDuracion)) {
+        } else if (!Util.comprobarSpinner(vista.campoNumDuracion)) {
             JOptionPane.showMessageDialog(null, "El campo Duracion en minutos no puede ser menor que 0");
         } else if (Util.campoVacioCalendario(vista.campoFechaSalidaAlbum)) {
             Util.lanzaAlertaVacioCalendar(vista.campoFechaSalidaAlbum);
@@ -1029,7 +1029,7 @@ public class Controlador extends Component implements ActionListener, ItemListen
             String itemAutor = vista.comboAutores.getSelectedItem().toString();
             int autor = Integer.parseInt(itemAutor.split(" - ")[0].trim());
             int numCanciones = ((Number) vista.campoNumCanciones.getValue()).intValue();
-            int duracionCanciones = ((Number) vista.campoDuracion.getValue()).intValue();
+            int duracionCanciones = ((Number) vista.campoNumDuracion.getValue()).intValue();
             LocalDate fechaSalida = vista.campoFechaSalidaAlbum.getDate();
             String itemProd = vista.comboProductora.getSelectedItem().toString();
             int productora = Integer.parseInt(itemProd.split(" - ")[0].trim());
