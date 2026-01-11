@@ -560,8 +560,8 @@ public class Controlador extends Component implements ActionListener, ItemListen
         vista.campoAutor.setSelectedIndex(0);
         vista.campoGenero.setText("");
         vista.campoProd.setSelectedIndex(0);
-        vista.campoNumParticipantes.setValue(0);
-        vista.campoDuracion.setValue(0);
+        vista.campoNumParticipantes.setValue(1);
+        vista.campoDuracion.setValue(1);
         vista.españolCheckBox.setSelected(false);
         vista.inglesCheckBox.setSelected(false);
         vista.dembowCheckBox.setSelected(false);

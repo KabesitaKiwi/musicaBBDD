@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MusicaEnBBDD:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/MusicaEnBBDD_jar</output-path>
+    <root id="archive" name="MusicaEnBBDD.jar">
+      <element id="module-output" name="MusicaEnBBDD" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/LGoodDatePicker-10.3.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/jgoodies-forms-1.8.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/jgoodies-common-1.8.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/mysql-connector-j-8.3.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/flatlaf-demo-3.7.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
